@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ti:app xmlns:ti="http://ti.appcelerator.org">
+    <property name="ti.android.runtime">v8</property>
+    <property name="acs-oauth-secret-development" type="string">YiHyiqyDirKEGzKR9elCwkcLDHOJbjrE</property>
+    <property name="acs-oauth-key-development" type="string">AM4Mvm4vaMMXvlrSvKiHCmAazwAoaXTf</property>
+    <property name="acs-api-key-development" type="string">cqONF6CEz85VHUiOJ8LKnfTGBgFNIBcQ</property>
+    <property name="acs-oauth-secret-production" type="string">ZKZFhhftRTPpXlHPk7CLE4Cry66w52Gj</property>
+    <property name="acs-oauth-key-production" type="string">Qb5zwVAHxez7ShL6uZooqXn3yf8AdDY3</property>
+    <property name="acs-api-key-production" type="string">smZTukdehGaSTMwBxIMhrmOfhWReNWAs</property>
+    <sdk-version>2.1.0.GA</sdk-version>
+    <deployment-targets>
+        <target device="mobileweb">false</target>
+        <target device="iphone">true</target>
+        <target device="ipad">true</target>
+        <target device="android">true</target>
+        <target device="blackberry">false</target>
+    </deployment-targets>
+    <id>com.udk.mobile</id>
+    <name>University Daily Kansan</name>
+    <version>2.3</version>
+    <publisher>Tim Shedor</publisher>
+    <url>http://kansan.com</url>
+    <description>The University Daily Kansan is a student-run publication servicing the University of Kansas community. This app was produced by Tim Shedor, Web Editor Fall 2011.</description>
+    <copyright>2011 by The University Daily Kansan</copyright>
+    <icon>appicon.png</icon>
+    <persistent-wifi>false</persistent-wifi>
+    <prerendered-icon>false</prerendered-icon>
+    <statusbar-style>default</statusbar-style>
+    <statusbar-hidden>false</statusbar-hidden>
+    <fullscreen>false</fullscreen>
+    <navbar-hidden>false</navbar-hidden>
+    <analytics>true</analytics>
+    <guid>7241e8b2-bf44-4e22-8243-6b9d59e028b6</guid>
+    <property name="ti.android.google.map.api.key">04wny1pfUAQ54ut9hUZCAn-_oLA_ByVnrM27LXw</property>
+    <property name="ti.android.google.map.api.key.production">04wny1pfUAQ54ut9hUZCAn-_oLA_ByVnrM27LXw</property>
+    <iphone>
+        <orientations device="iphone">
+            <orientation>Ti.UI.PORTRAIT</orientation>
+            <orientation>Ti.UI.UPSIDE_PORTRAIT</orientation>
+            <orientation>Ti.UI.LANDSCAPE_LEFT</orientation>
+            <orientation>Ti.UI.LANDSCAPE_RIGHT</orientation>
+        </orientations>
+        <orientations device="ipad">
+            <orientation>Ti.UI.PORTRAIT</orientation>
+            <orientation>Ti.UI.UPSIDE_PORTRAIT</orientation>
+            <orientation>Ti.UI.LANDSCAPE_LEFT</orientation>
+            <orientation>Ti.UI.LANDSCAPE_RIGHT</orientation>
+        </orientations>
+    </iphone>
+    <android>
+        <manifest android:versionCode="12" android:versionName="2.2" xmlns:android="http://schemas.android.com/apk/res/android">
+            <supports-screens android:anyDensity="false"
+                android:largeScreens="true" android:normalScreens="true" android:smallScreens="false"/>
+            <tool-api-level>8</tool-api-level>
+            <uses-sdk android:minSdkVersion="7"/>
+        </manifest>
+    </android>
+    <modules>
+        <module platform="commonjs" version="2.1.0">ti.cloud</module>
+    </modules>
+</ti:app>
