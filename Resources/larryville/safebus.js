@@ -39,11 +39,12 @@ function closest(array,num){
 }
 
 function convertToTime(raw){
-	var raw1 = (raw / 60);
-	var raw2 = raw1.slice('.');
-	var raw3 = ((raw2[1] * 60)/100);
-	var raw4 = raw3.slice('.');
-	return raw2[0] +':'+raw2[1];
+	var convertHours = (raw / 60);
+	var splitHours = convertHours.toString().split(".");
+	var convertMinutes = ((splitHours[1] * 60)/100);
+	var splitMinutes = convertMinutes.toString().split('.');
+	var minutes = splitMinutes[0].substring(0,2)
+	return splitHours[0] +':'+minutes;
 }
 
 	for(dd = 0; dd < response.length; dd++) {
@@ -60,9 +61,11 @@ function convertToTime(raw){
 				var nextTimesPos = timePos.slice((nearestTimeIndex+parseInt(1)), (nearestTimeIndex+parseInt(4)));
 				var nextTimes = '';
 				for(h = 0; h < nextTimesPos.length; h++){
+					Ti.API.info(nextTimesPos[h]);
 					nextTimes += convertToTime(nextTimesPos[h]) + ', ';
 					Ti.API.info('nextTimes' + nextTimes);
 				}
+				nearestTime = convertToTime(nearestTime);
 				Ti.API.info('nearest In' + nearestTimeIndex);
 				Ti.API.info('nearest' + nearestTime);
 				Ti.API.info('next' + nextTimes);
@@ -70,7 +73,7 @@ function convertToTime(raw){
 					latitude:stopsPos[p].location[0][0],
 					longitude:stopsPos[p].location[0][1],
 					title:nearestTime,
-					pincolor:Titanium.Map.ANNOTATION_RED,
+					image:'../images/map_icons/sb'+response[dd].route+'.png',
 					subtitle:nextTimes,
 					animate:true,
 					id:p
