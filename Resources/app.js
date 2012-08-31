@@ -69,17 +69,17 @@ var kjhktab = Ti.UI.createTab({
     window:kjhkwin
 });
 
-// create kujh window
-var kujhwin = Ti.UI.createWindow({  
-    title:'KUJH-TV',
+// create ffa window
+var ffawin = Ti.UI.createWindow({  
+    title:'Free For All',
 	url:'larryville/safebus.js'
 });
 
-// craete kujhtab
-var kujhtab = Ti.UI.createTab({ 
-    icon:'tabs/tv.png',
-    title:'KUJH-TV',
-    window:kujhwin
+// craete ffatab
+var ffatab = Ti.UI.createTab({ 
+    icon:'tabs/ffa.png',
+    title:'Free For All',
+    window:ffawin
 });
 
 // create bargainwin window
@@ -110,8 +110,8 @@ newswin.addEventListener('focus', function(e){
 kjhkwin.addEventListener('focus', function(e){
 	Titanium.App.Analytics.trackPageview('/kjhk');
 });
-kujhwin.addEventListener('focus', function(e){
-	Titanium.App.Analytics.trackPageview('/kujh');
+ffawin.addEventListener('focus', function(e){
+	Titanium.App.Analytics.trackPageview('/ffa');
 });
 lvwin.addEventListener('focus', function(e){
 	Titanium.App.Analytics.trackPageview('/larryville');
@@ -122,9 +122,9 @@ morewin.addEventListener('focus', function(e){
 
 // add the tab to the tab group
 tabGroup.addTab(newstab);
+tabGroup.addTab(ffatab);
 tabGroup.addTab(lvtab);
 tabGroup.addTab(kjhktab);
-tabGroup.addTab(kujhtab);
 tabGroup.addTab(moretab);
 
 lvwin.addEventListener('focus', firstPreferences);
