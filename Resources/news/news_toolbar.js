@@ -12,7 +12,7 @@ if(Ti.Platform.osname=='android') {
 	body = 'SourceSansPro-Regular';
 } 
 var scrollView = Titanium.UI.createScrollView({
-	contentWidth:870,
+	contentWidth:990,
 	contentHeight:40,
 	top:0,
 	left:40,
@@ -240,4 +240,32 @@ var entertainment = Titanium.UI.createLabel({
 		Titanium.UI.currentTab.open(entertainmentwindow,{animated:true});
 	});
 scrollView.add(entertainment);
+
+var kujh = Titanium.UI.createLabel({
+			text:'KUJH-TV',
+			left:835,
+			height:30,
+			color:'#f9f9f9',
+			font:{
+				fontSize:22,
+				fontFamily:dom,
+			},
+			width:'auto',
+			verticalAlign:'center',
+			textAlign:'center',
+			shadowColor:'#000000',
+			shadowOffset:{x:1, y:-1},
+			top:10
+		});
+	kujh.addEventListener('click', function(e){
+    	Titanium.App.Analytics.trackPageview('/news/kujh');
+	});
+	kujh.addEventListener('click',function(e){
+    	var kujhwindow = Ti.UI.createWindow({
+            url:"kujh.js",
+            title:"KUJH-TV"
+    });
+		Titanium.UI.currentTab.open(kujhwindow,{animated:true});
+	});
+scrollView.add(kujh);
 win.add(scrollView);

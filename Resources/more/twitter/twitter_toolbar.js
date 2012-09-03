@@ -12,12 +12,6 @@ var scrollView = Titanium.UI.createScrollView({
 	backgroundColor:'#7085a1'
 });
 
-scrollView.addEventListener('scroll', function(e)
-{
-	Ti.API.info('x ' + e.x + ' y ' + e.y);
-
-});
-
 win.add(scrollView);
 
 var UDK_News = Titanium.UI.createLabel({

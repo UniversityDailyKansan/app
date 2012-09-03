@@ -1,5 +1,5 @@
 var win = Titanium.UI.currentWindow;
-win.backgroundImage = 'images/bg.png';
+win.backgroundImage = '../images/bg.png';
 win.backgroundRepeat = true;
 var feed = 'http://kansan.com/api/get_category_posts/?slug=video';
 var section = 'News';
@@ -199,7 +199,7 @@ Titanium.UI.iPhone.appBadge=Titanium.UI.iPhone.appBadge-1;
 						image:thumbnail,
 						height:thumbheight,
 						left:6,
-						top:8,
+						top:7,
 						right:6,
 					});
 					newsitem_view.add(thumbnail_view);
@@ -246,7 +246,7 @@ Titanium.UI.iPhone.appBadge=Titanium.UI.iPhone.appBadge-1;
 				backgroundColor:'#10354c'
 			});
  			var refresh_circle = Ti.UI.createImageView({
-				image:'images/refresh.png',
+				image:'../images/refresh.png',
 				left:8,
 				top:8,
 				height:25,
@@ -265,7 +265,8 @@ Titanium.UI.iPhone.appBadge=Titanium.UI.iPhone.appBadge-1;
  				xhr.send();
             });
 		win.add(refresh);
-   		Ti.include('master_image.js');
+		Ti.include('news_toolbar.js');
+   		Ti.include('../master_image.js');
         tableview.addEventListener('click',function(e) {
         	var w = Ti.UI.createWindow({title:'KUJH-TV'});
             var b = Titanium.UI.createButton({

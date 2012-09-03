@@ -12,6 +12,7 @@ var mapview = Titanium.Map.createView({
 	animate:true,
 	regionFit:true,
 });
+var fileName = 'sbroutes.json'; 
 var file = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, 'sbroutes.json');    
 var results, route, coords, stops, location, times; 
 var preParseData = (file.read().text); 
