@@ -203,7 +203,7 @@ Titanium.UI.iPhone.appBadge=Titanium.UI.iPhone.appBadge-1;
 						image:thumbnail,
 						height:thumbheight,
 						left:6,
-						top:0,
+						top:7,
 						right:6,
 					});
 					newsitem_view.add(thumbnail_view);

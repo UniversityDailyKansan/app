@@ -37,6 +37,10 @@ var shadow_offset = {x: -2, y: -2}; //Set on heading titles
 var row_bgImage = 'images/row_bg.png'; //Set on heading backgrounds
 
 var typeData = [
+	{ prettyName:'Safebus Red', hasChild:true, slug:'sbred', desc:'Safebus Red', },
+	{ prettyName:'Safebus Green', hasChild:true, slug:'sbgreen', desc:'Safebus Green', },
+	{ prettyName:'Safebus Blue', hasChild:true, slug:'sbblue', desc:'Safebus Blue', },
+	{ prettyName:'Safebus Yellow', hasChild:true, slug:'sbyellow', desc:'Safebus Yellow', },
 	{ prettyName:'Neighborhood News', hasChild:true, slug:'neighborhood-messages', desc:'Community stories from you or the grouch next door', },
 	{ prettyName:'Bargains', hasChild:true, slug:'bargains', desc: 'You will know where awesome deals are going to be.', },
 	{ prettyName:'Events', hasChild:true, slug:'events', desc:'There\'s a block party on Ohio next weekend', },
@@ -109,18 +113,18 @@ win.backgroundColor = light_grey;
         no_internet.show();
     };
     function getTableViewRowFromIndex(table, index) {
-	Ti.API.info('index: ' + index);
+	//Ti.API.info('index: ' + index);
 	var sections = table.data;
 	if (!sections) {
 		return null;
 	}
 	var currentRowIndex = index, row;
 	for (var i = 0; i < sections.length; ++i) {
-		Ti.API.info('Section: ' + i);
-		Ti.API.info('Section length: ' + sections[i].rows.length);
-		Ti.API.info('currentRowIndex: ' + currentRowIndex);
+		//Ti.API.info('Section: ' + i);
+		//Ti.API.info('Section length: ' + sections[i].rows.length);
+		//Ti.API.info('currentRowIndex: ' + currentRowIndex);
 		if (currentRowIndex < sections[i].rows.length) {
-			Ti.API.info('RETURNING: ' + sections[i].rows[currentRowIndex].title);
+			//Ti.API.info('RETURNING: ' + sections[i].rows[currentRowIndex].title);
 			Ti.API.debug(sections[i].rows[currentRowIndex]);
 			Ti.API.debug(JSON.stringify(sections[i].rows[currentRowIndex]));
 			return sections[i].rows[currentRowIndex];
@@ -292,7 +296,7 @@ win.backgroundColor = light_grey;
                 var title = evt.title;
                 var clickSource = evt.clicksource;
                 var id = evt.annotation.id;
-                if (evt.clicksource == 'leftButton' || evt.clicksource == 'leftPane' || evt.clicksource == 'leftView') {
+                if (evt.clicksource == 'leftButton' || evt.clicksource == 'leftPane' || evt.clicksource == 'leftView' || evt.clicksource == 'title') {
                 var row = getTableViewRowFromIndex(feed_rows, id);
             	var actual_content = Ti.UI.createWebView({
             		top:0,
@@ -400,6 +404,124 @@ Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
             });
 		win.add(refresh);
 			Ti.include('larryville_toolbar.js');
+			var file = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, 'sbroutes.json');    
+var results, route, coords, stops, location, times; 
+var preParseData = (file.read().text); 
+var response = JSON.parse(preParseData).results; 
+var date = new Date();
+var hours = date.getHours();
+var minutes = date.getMinutes();
+var hm = ((hours * 60)+minutes); //Returns how many minutes
+function appendIterationTimes(array,iteration){
+	//http://stackoverflow.com/a/8069367 && http://stackoverflow.com/a/4822630
+	for (var i = array[0]; i <= 1439; i += iteration) {
+		if(!(i == array[0]))
+			array.push(i);
+	}
+	for (var i = 0; i <= array[1]; i += iteration) {
+		if(!(i == array[1]))
+		array.push(i);
+	}
+	array.sort(function(a,b){return a - b});
+	return array;
+}
+function closest(array,num){
+    var k=0;
+    var minDiff=100000;
+    var ans;
+    for(k in array){
+         var m=Math.abs(num-array[k]);
+         if(m<minDiff){ 
+                minDiff=m; 
+                ans=array[k]; 
+            }
+      }
+    return ans;
+}
+
+function convertToTime(raw){
+	if(raw === 0)
+		return '12:00 a.m.';
+	else if(raw === 60)
+		return '1:00 a.m.';
+	else if(raw === 120)
+		return '2:00 a.m.';
+	else if(raw === 180)
+		return '3:00 a.m.';
+	else if(raw === 1260)
+		return '9:00 p.m.';
+	else if(raw === 1320)
+		return '10:00 p.m.';
+	else if(raw === 1380)
+		return '11:00 p.m.';
+	else {
+		var convertHours = (raw / 60);
+		var splitHours = convertHours.toString().split(".");
+		var convertMinutes = ((splitHours[1] * 60)/100);
+		var splitMinutes = convertMinutes.toString().split('.');
+		var minutes = Math.round(((splitMinutes[0].substring(0,2))+'.'+splitMinutes[0].substring(2,5)));
+		if(minutes === 3){
+			minutes = 30;
+		}
+		if(splitHours[0] >= 12 && splitHours !== 0){
+			var hours = splitHours[0] - 12;
+			var timeOfDay = 'p.m.';
+		} else if(splitHours[0] == 0){
+			var hours = 12;
+			var timeOfDay = 'a.m.';
+		} else {
+			var hours = splitHours[0];
+			var timeOfDay = 'a.m.';
+		}
+		return hours +':'+minutes+' '+timeOfDay;
+	}
+}
+function createRoute(routeName,response){
+	var routePoints = []; //Create empty point array
+	var routeStops = []; //Create empty stop array
+	var coordsPos = response[dd].coords;
+	var stopsPos = response[dd].stops;
+	for(i = 0; i < coordsPos.length; i++) {
+		routePoints.push({latitude: coordsPos[i][0], longitude: coordsPos[i][1]});
+	}
+	for(p = 0; p < stopsPos.length; p++) {
+		var timePos = appendIterationTimes(stopsPos[p].times[0],response[dd].iteration);
+		var nearestTime = closest(timePos,hm, response[dd].iteration);
+		var nearestTimeIndex = timePos.indexOf(nearestTime);
+		var nextTimesPos = timePos.slice((nearestTimeIndex+parseInt(1)), (nearestTimeIndex+parseInt(4)));
+		var nextTimes = '';
+		for(h = 0; h < nextTimesPos.length; h++){
+			nextTimes += convertToTime(nextTimesPos[h]) + ', ';
+		}
+		nearestTime = convertToTime(nearestTime);
+		var mrker = Titanium.Map.createAnnotation({
+			latitude:stopsPos[p].location[0][0],
+			longitude:stopsPos[p].location[0][1],
+			title:stopsPos[p].prettyName+': '+nearestTime,
+			image:'../images/map_icons/sb'+routeName+'.png',
+			subtitle:'Next: '+nextTimes,
+			animate:true,
+			id:p
+		});
+		routeStops.push(mrker); 
+		//For later: http://maps.googleapis.com/maps/api/directions/json?origin=38.95097,-95.26001&destination=38.95322,-95.25704&sensor=false&mode=walking
+	}
+	var newRoute = {
+		name: routeName+" Route",
+		points:routePoints,
+		color:routeName,
+		width:2
+	};
+	if(Titanium.App.Properties.getString('sb'+routeName) === 'shown') {		
+		mapview.addRoute(newRoute);
+		mapview.addAnnotations(routeStops);
+	}
+}
+
+for(dd = 0; dd < response.length; dd++) {
+	createRoute(response[dd].route, response)
+}
+
 			win.add(mapview); //Add dat map to the screen
  			
 				}
@@ -408,6 +530,7 @@ Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
 		}
 	};
 	xhr.send();
+	
 
 	win.addEventListener('focus', function(e){
     	Titanium.App.Analytics.trackPageview('/larryville/map');
