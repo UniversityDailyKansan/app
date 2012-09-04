@@ -49,7 +49,7 @@ var typeData = [
 	{ prettyName:'Tweets', hasChild:true, slug:'tweets', desc:'Tweet with your location on in your latest 140-composition and hashtag #larryvilleku', },
 	//{ prettyName:'Photos from Flickr', hasChild:true, slug:'photos', desc:'Geotagged hipster pics and snapshots of Lawrence', },
 	//{ prettyName:'Police Citations', hasChild:true, slug:'police-citations', desc:'Everything from an unpaid meter to an MIP to speeding on K-10', },
-	{ prettyName:'Accidents', hasChild:true, slug:'car-accidents', desc:'Drive safely. Every accident within the city limits is mapped', },
+	// { prettyName:'Accidents', hasChild:true, slug:'car-accidents', desc:'Drive safely. Every accident within the city limits is mapped', },
 ];
 
 win.backgroundColor = light_grey;
@@ -73,7 +73,7 @@ win.backgroundColor = light_grey;
 	var xhr = Ti.Network.createHTTPClient();
 	xhr.timeout = 1000000;
 	var website = "http://larryvilleku.com";
-	var limit_value = 50 //Cause most iOS devices can handle this amount
+	var limit_value = 40 //Cause most iOS devices can handle this amount
 	var map_detail_height = 110; //For the detail view on the feed_row table.
 	if (Ti.Android) {
 		limit_value = 30; //Cause some Android devices can handle more, but the least can handle just 30.
@@ -176,6 +176,7 @@ win.backgroundColor = light_grey;
 					image:'../images/map_icons/'+type+'.png',
 					animate:true,
 					leftButton:'../images/map_icons/just_icons/'+type+'.png',
+					tid:'map'+i,
 					id:i
 				});
 				annotations.push(mrker); 
@@ -290,13 +291,149 @@ win.backgroundColor = light_grey;
 				zoom:20, //Don't know why this is here, but it can't hurt.
 			});
 			Titanium.Geolocation.distanceFilter = 10;
+Titanium.Geolocation.purpose = "Recieve User Location";
+Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
+           function getLocation(){
+				Titanium.Geolocation.getCurrentPosition(function(e){
+        			var region={
+						latitude: e.coords.latitude, //Standrad HTML5 getting location practice
+						longitude: e.coords.longitude,
+						animate:true,
+						latitudeDelta:0.02,
+						longitudeDelta:0.02
+					};
+					mapview.setLocation(region);
+				});
+			};
+			
+ 			Titanium.Geolocation.addEventListener('location',function(){
+    			getLocation();
+			}); 			
+			var file = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, 'sbroutes.json');    
+			var results, route, coords, stops, location, times; 
+			var preParseData = (file.read().text); 
+			var response = JSON.parse(preParseData).results; 
+			var date = new Date();
+			var hours = date.getHours();
+			var minutes = date.getMinutes();
+			var hm = ((hours * 60)+minutes); //Returns how many minutes
+			function appendIterationTimes(array,iteration){
+				//http://stackoverflow.com/a/8069367 && http://stackoverflow.com/a/4822630
+				for (var i = array[0]; i <= 1439; i += iteration) {
+					if(!(i == array[0]))
+					array.push(i);
+				}
+				for (var i = 0; i <= array[1]; i += iteration) {
+					if(!(i == array[1]))
+					array.push(i);
+				}
+				array.sort(function(a,b){return a - b});
+				return array;
+			}
+			function closest(array,num){
+    			var k=0;
+    			var minDiff=100000;
+    			var ans;
+    			for(k in array){
+         			var m=Math.abs(num-array[k]);
+         			if(m<minDiff){ 
+                		minDiff=m; 
+                		ans=array[k]; 
+            		}
+      			}
+    			return ans;
+			}
+			function convertToTime(raw){
+				if(raw === 0)
+					return '12:00 a.m.';
+				else if(raw === 60)
+					return '1:00 a.m.';
+				else if(raw === 120)
+					return '2:00 a.m.';
+				else if(raw === 180)
+					return '3:00 a.m.';
+				else if(raw === 1260)
+					return '9:00 p.m.';
+				else if(raw === 1320)
+					return '10:00 p.m.';
+				else if(raw === 1380)
+					return '11:00 p.m.';
+				else {
+					var convertHours = (raw / 60);
+					var splitHours = convertHours.toString().split(".");
+					var convertMinutes = ((splitHours[1] * 60)/100);
+					var splitMinutes = convertMinutes.toString().split('.');
+					var minutes = Math.round(((splitMinutes[0].substring(0,2))+'.'+splitMinutes[0].substring(2,5)));
+					if(minutes === 3){
+						minutes = 30;
+					}
+					if(splitHours[0] >= 12 && splitHours !== 0){
+						var hours = splitHours[0] - 12;
+						var timeOfDay = 'p.m.';
+					} else if(splitHours[0] == 0){
+						var hours = 12;
+						var timeOfDay = 'a.m.';
+					} else {
+						var hours = splitHours[0];
+						var timeOfDay = 'a.m.';
+					}
+					return hours +':'+minutes+' '+timeOfDay;
+				}
+			}
+			function createRoute(routeName,response){
+				var routePoints = []; //Create empty point array
+				var routeStops = []; //Create empty stop array
+				var coordsPos = response[dd].coords;
+				var stopsPos = response[dd].stops;
+				for(i = 0; i < coordsPos.length; i++) {
+					routePoints.push({latitude: coordsPos[i][0], longitude: coordsPos[i][1]});
+				}
+				for(p = 0; p < stopsPos.length; p++) {
+					var timePos = appendIterationTimes(stopsPos[p].times[0],response[dd].iteration);
+					var nearestTime = closest(timePos,hm, response[dd].iteration);
+					var nearestTimeIndex = timePos.indexOf(nearestTime);
+					var nextTimesPos = timePos.slice((nearestTimeIndex+parseInt(1)), (nearestTimeIndex+parseInt(4)));
+					var nextTimes = '';
+					for(h = 0; h < nextTimesPos.length; h++){
+						nextTimes += convertToTime(nextTimesPos[h]) + ', ';
+					}
+					nearestTime = convertToTime(nearestTime);
+					var mrker = Titanium.Map.createAnnotation({
+						latitude:stopsPos[p].location[0][0],
+						longitude:stopsPos[p].location[0][1],
+						title:stopsPos[p].prettyName+': '+nearestTime,
+						image:'../images/map_icons/sb'+routeName+'.png',
+						subtitle:'Next: '+nextTimes,
+						animate:true,
+						id:p,
+						tid:'bus'+p,
+					});
+					routeStops.push(mrker); 
+				}
+				var newRoute = {
+					name: routeName+" Route",
+					points:routePoints,
+					color:routeName,
+					width: response[dd].lineWidth,
+				};
+				if(Titanium.App.Properties.getString('sb'+routeName) === 'shown') {		
+					mapview.addRoute(newRoute);
+					mapview.addAnnotations(routeStops);
+				}
+			}
+			
+			for(dd = 0; dd < response.length; dd++) {
+				createRoute(response[dd].route, response)
+			}
 			
 			mapview.addEventListener('click', function(evt) {
                 var annotation = evt.annotation;
                 var title = evt.title;
                 var clickSource = evt.clicksource;
                 var id = evt.annotation.id;
+                var tid = evt.annotation.tid;
                 if (evt.clicksource == 'leftButton' || evt.clicksource == 'leftPane' || evt.clicksource == 'leftView' || evt.clicksource == 'title') {
+                if(tid.substr(0,3) === 'map'){
                 var row = getTableViewRowFromIndex(feed_rows, id);
             	var actual_content = Ti.UI.createWebView({
             		top:0,
@@ -305,22 +442,21 @@ win.backgroundColor = light_grey;
             		bottom:map_detail_height, //Only appears on iOS,
             		html:'<html><head><link href="http://fonts.googleapis.com/css?family=Open+Sans+Condensed|Source+Sans+Pro|Lobster" rel="stylesheet" type="text/css"><style type="text/css"> body {font-family:"Source Sans Pro",Arial,sans-serif; width:'+reduced_phone_width+'px; font-size:16px;} img {width:'+reduced_phone_width+'px; height:auto} h3.mobile_app_only {color:'+col1+'; font-family:"Open Sans Condensed",Arial,sans-serif; font-weight:normal; font-size:22px;} a {text-decoration:none;}</style></head><body><a href="'+website+'/'+row.type+'/detail/'+row.news_id+'"><h3 class="mobile_app_only">' + row.heading + '</h3></a>' + row.content + '</body></html>'
             	});
-
+				
 				Titanium.App.Analytics.trackPageview('/larryville/detail-view/'+row.heading);
+				
 				var detail_window = Ti.UI.createWindow({
-				title:'Details'
-			});
+					title:'Details'
+				});
 				detail_window.add(actual_content);
-            	
-            var b = Titanium.UI.createButton({
-                title:'Close',
-                style:Titanium.UI.iPhone.SystemButtonStyle.PLAIN
-            });
-            detail_window.setLeftNavButton(b);
-            b.addEventListener('click',function()
-            {
-                detail_window.close();
-            });
+				var b = Titanium.UI.createButton({
+                	title:'Close',
+                	style:Titanium.UI.iPhone.SystemButtonStyle.PLAIN
+            	});
+            	detail_window.setLeftNavButton(b);
+            	b.addEventListener('click',function() {
+                	detail_window.close();
+           		});
             	if (Ti.Android) { } else {	
 					var detail_mrker = Titanium.Map.createAnnotation({
 						latitude:row.location[1],
@@ -350,28 +486,74 @@ win.backgroundColor = light_grey;
 					detail_window.add(detail_mapview);
 				};
             	detail_window.open({modal:true});
+ 				} else {
+					var curr_latitude = '';
+					var curr_longitude = '';
+					function getCoordsPlease(){
+						Titanium.Geolocation.getCurrentPosition(function(e){
+							curr_latitude = e.coords.latitude; //Standrad HTML5 getting location practice
+							curr_longitude = e.coords.longitude;
+						});
+					}
+					getCoordsPlease();
+ 					var directions_data = [];
+ 					var wd = Ti.Network.createHTTPClient();
+ 					wd.timeout = 1000000;
+ 					wd.open("GET", "http://maps.googleapis.com/maps/api/directions/json?origin="+curr_latitude+","+curr_longitude+"&destination="+evt.annotation.latitude+","+evt.annotation.longitude+"&sensor=false&mode=walking");
+ 					wd.onload = function() {
+ 						try {
+ 							var wdirections = JSON.parse(this.responseText);			 
+ 							for (var kk = 0; kk < wdirections.length; kk++){
+ 								var distance = wdirections[kk].routes[0].legs.steps.distance.text;
+ 								var duration = wdirections[kk].routes[0].legs.steps.duration.text;
+ 								var instructions = wdirections[kk].routes[0].legs.steps.html_instructions;
+ 								var directions_row = Ti.UI.createTableViewRow({hasChild:false,id:k});
+								
+								var distance_label = Ti.UI.createView({
+									text:distance,
+									left:10,
+									top:10,
+								});
+								var duration_label = Ti.UI.createView({
+									text:duration,
+									right:10,
+									top:10,
+								});
+								var instructions_label = Ti.UI.createView({
+									text:instructions,
+									textAlign:center,
+									top:10,
+								});
+								directions.push(directions_row);
+ 							}
+ 							var directions_tv = Titanium.UI.createTableView({
+								data:directions_tv,
+								minRowHeight:58,
+								left:0,
+								right:0
+							});
+							var directions_window = Ti.UI.createWindow({
+								title:'Walking Directions'
+							});
+							directions_window.add(directions_tv);
+							var directions_b = Titanium.UI.createButton({
+								title:'Close',
+								style:Titanium.UI.iPhone.SystemButtonStyle.PLAIN
+							});
+							directions_window.setLeftNavButton(directions_b);
+							directions_b.addEventListener('click',function() {
+								directions_window.close();
+							});
+							directions_window.open({modal:true});
+ 						}
+ 						catch(E){
+							alert(E);
+						}
+ 					}
+					wd.send();
+ 				}
  				}
             });
-            
-           
-Titanium.Geolocation.purpose = "Recieve User Location";
-Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
-           function getLocation(){
-				Titanium.Geolocation.getCurrentPosition(function(e){
-        			var region={
-						latitude: e.coords.latitude, //Standrad HTML5 getting location practice
-						longitude: e.coords.longitude,
-						animate:true,
-						latitudeDelta:0.02,
-						longitudeDelta:0.02
-					};
-					mapview.setLocation(region);
-				});
-			};
-			
- 			Titanium.Geolocation.addEventListener('location',function(){
-    			getLocation();
-			}); 
 			
 				var refresh = Ti.UI.createView({
 				height:40,
@@ -404,123 +586,6 @@ Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
             });
 		win.add(refresh);
 			Ti.include('larryville_toolbar.js');
-			var file = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, 'sbroutes.json');    
-var results, route, coords, stops, location, times; 
-var preParseData = (file.read().text); 
-var response = JSON.parse(preParseData).results; 
-var date = new Date();
-var hours = date.getHours();
-var minutes = date.getMinutes();
-var hm = ((hours * 60)+minutes); //Returns how many minutes
-function appendIterationTimes(array,iteration){
-	//http://stackoverflow.com/a/8069367 && http://stackoverflow.com/a/4822630
-	for (var i = array[0]; i <= 1439; i += iteration) {
-		if(!(i == array[0]))
-			array.push(i);
-	}
-	for (var i = 0; i <= array[1]; i += iteration) {
-		if(!(i == array[1]))
-		array.push(i);
-	}
-	array.sort(function(a,b){return a - b});
-	return array;
-}
-function closest(array,num){
-    var k=0;
-    var minDiff=100000;
-    var ans;
-    for(k in array){
-         var m=Math.abs(num-array[k]);
-         if(m<minDiff){ 
-                minDiff=m; 
-                ans=array[k]; 
-            }
-      }
-    return ans;
-}
-
-function convertToTime(raw){
-	if(raw === 0)
-		return '12:00 a.m.';
-	else if(raw === 60)
-		return '1:00 a.m.';
-	else if(raw === 120)
-		return '2:00 a.m.';
-	else if(raw === 180)
-		return '3:00 a.m.';
-	else if(raw === 1260)
-		return '9:00 p.m.';
-	else if(raw === 1320)
-		return '10:00 p.m.';
-	else if(raw === 1380)
-		return '11:00 p.m.';
-	else {
-		var convertHours = (raw / 60);
-		var splitHours = convertHours.toString().split(".");
-		var convertMinutes = ((splitHours[1] * 60)/100);
-		var splitMinutes = convertMinutes.toString().split('.');
-		var minutes = Math.round(((splitMinutes[0].substring(0,2))+'.'+splitMinutes[0].substring(2,5)));
-		if(minutes === 3){
-			minutes = 30;
-		}
-		if(splitHours[0] >= 12 && splitHours !== 0){
-			var hours = splitHours[0] - 12;
-			var timeOfDay = 'p.m.';
-		} else if(splitHours[0] == 0){
-			var hours = 12;
-			var timeOfDay = 'a.m.';
-		} else {
-			var hours = splitHours[0];
-			var timeOfDay = 'a.m.';
-		}
-		return hours +':'+minutes+' '+timeOfDay;
-	}
-}
-function createRoute(routeName,response){
-	var routePoints = []; //Create empty point array
-	var routeStops = []; //Create empty stop array
-	var coordsPos = response[dd].coords;
-	var stopsPos = response[dd].stops;
-	for(i = 0; i < coordsPos.length; i++) {
-		routePoints.push({latitude: coordsPos[i][0], longitude: coordsPos[i][1]});
-	}
-	for(p = 0; p < stopsPos.length; p++) {
-		var timePos = appendIterationTimes(stopsPos[p].times[0],response[dd].iteration);
-		var nearestTime = closest(timePos,hm, response[dd].iteration);
-		var nearestTimeIndex = timePos.indexOf(nearestTime);
-		var nextTimesPos = timePos.slice((nearestTimeIndex+parseInt(1)), (nearestTimeIndex+parseInt(4)));
-		var nextTimes = '';
-		for(h = 0; h < nextTimesPos.length; h++){
-			nextTimes += convertToTime(nextTimesPos[h]) + ', ';
-		}
-		nearestTime = convertToTime(nearestTime);
-		var mrker = Titanium.Map.createAnnotation({
-			latitude:stopsPos[p].location[0][0],
-			longitude:stopsPos[p].location[0][1],
-			title:stopsPos[p].prettyName+': '+nearestTime,
-			image:'../images/map_icons/sb'+routeName+'.png',
-			subtitle:'Next: '+nextTimes,
-			animate:true,
-			id:p
-		});
-		routeStops.push(mrker); 
-		//For later: http://maps.googleapis.com/maps/api/directions/json?origin=38.95097,-95.26001&destination=38.95322,-95.25704&sensor=false&mode=walking
-	}
-	var newRoute = {
-		name: routeName+" Route",
-		points:routePoints,
-		color:routeName,
-		width:2
-	};
-	if(Titanium.App.Properties.getString('sb'+routeName) === 'shown') {		
-		mapview.addRoute(newRoute);
-		mapview.addAnnotations(routeStops);
-	}
-}
-
-for(dd = 0; dd < response.length; dd++) {
-	createRoute(response[dd].route, response)
-}
 
 			win.add(mapview); //Add dat map to the screen
  			
