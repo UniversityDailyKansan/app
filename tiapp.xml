@@ -7,7 +7,7 @@
     <property name="acs-oauth-secret-production" type="string">ZKZFhhftRTPpXlHPk7CLE4Cry66w52Gj</property>
     <property name="acs-oauth-key-production" type="string">Qb5zwVAHxez7ShL6uZooqXn3yf8AdDY3</property>
     <property name="acs-api-key-production" type="string">smZTukdehGaSTMwBxIMhrmOfhWReNWAs</property>
-    <sdk-version>2.1.0.GA</sdk-version>
+    <sdk-version>2.1.2.GA</sdk-version>
     <deployment-targets>
         <target device="mobileweb">false</target>
         <target device="iphone">true</target>
@@ -21,7 +21,7 @@
     <publisher>Tim Shedor</publisher>
     <url>http://kansan.com</url>
     <description>The University Daily Kansan is a student-run publication servicing the University of Kansas community. This app was produced by Tim Shedor, Web Editor Fall 2011.</description>
-    <copyright>2011 by The University Daily Kansan</copyright>
+    <copyright>2012 by The University Daily Kansan</copyright>
     <icon>appicon.png</icon>
     <persistent-wifi>false</persistent-wifi>
     <prerendered-icon>false</prerendered-icon>
@@ -48,7 +48,7 @@
         </orientations>
     </iphone>
     <android>
-        <manifest android:versionCode="12" android:versionName="2.2" xmlns:android="http://schemas.android.com/apk/res/android">
+        <manifest android:versionCode="13" android:versionName="2.3" xmlns:android="http://schemas.android.com/apk/res/android">
             <supports-screens android:anyDensity="false"
                 android:largeScreens="true" android:normalScreens="true" android:smallScreens="false"/>
             <tool-api-level>8</tool-api-level>

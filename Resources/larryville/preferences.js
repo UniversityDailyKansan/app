@@ -23,13 +23,13 @@ var shadow_offset = {x: -2, y: -2}; //Set on heading titles
 var row_bgImage = 'images/row_bg.png'; //Set on heading backgrounds
 
 var typeData = [
+	{ prettyName:'Neighborhood News', hasChild:true, slug:'neighborhood-messages', desc:'Community stories from you or the grouch next door', },
+	{ prettyName:'Bargains', hasChild:true, slug:'bargains', desc: 'You will know where awesome deals are going to be.', },
+	{ prettyName:'Events', hasChild:true, slug:'events', desc:'There\'s a block party on Ohio next weekend', },
 	{ prettyName:'Safebus Red', hasChild:true, slug:'sbred', desc:'Safebus Red', },
 	{ prettyName:'Safebus Green', hasChild:true, slug:'sbgreen', desc:'Safebus Green', },
 	{ prettyName:'Safebus Blue', hasChild:true, slug:'sbblue', desc:'Safebus Blue', },
 	{ prettyName:'Safebus Yellow', hasChild:true, slug:'sbyellow', desc:'Safebus Yellow', },
-	{ prettyName:'Neighborhood News', hasChild:true, slug:'neighborhood-messages', desc:'Community stories from you or the grouch next door', },
-	{ prettyName:'Bargains', hasChild:true, slug:'bargains', desc: 'You will know where awesome deals are going to be.', },
-	{ prettyName:'Events', hasChild:true, slug:'events', desc:'There\'s a block party on Ohio next weekend', },
 	{ prettyName:'Restaurants', hasChild:true, slug:'restaurants', desc:'Tonight it\'s Mass St, North Iowa or a dine-in. Check the ratings and comments', },
 	{ prettyName:'Kansan Articles', hasChild:true, slug:'local-news', desc:'Mapped locations of the University Daily Kansan stories and reports', },
 	{ prettyName:'Tweets', hasChild:true, slug:'tweets', desc:'Tweet with your location on in your latest 140-composition and hashtag #larryvilleku', },

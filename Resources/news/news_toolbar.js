@@ -241,8 +241,8 @@ var entertainment = Titanium.UI.createLabel({
 	});
 scrollView.add(entertainment);
 
-var kujh = Titanium.UI.createLabel({
-			text:'KUJH-TV',
+var video = Titanium.UI.createLabel({
+			text:'Video',
 			left:835,
 			height:30,
 			color:'#f9f9f9',
@@ -257,15 +257,15 @@ var kujh = Titanium.UI.createLabel({
 			shadowOffset:{x:1, y:-1},
 			top:10
 		});
-	kujh.addEventListener('click', function(e){
-    	Titanium.App.Analytics.trackPageview('/news/kujh');
+	video.addEventListener('click', function(e){
+    	Titanium.App.Analytics.trackPageview('/news/video');
 	});
-	kujh.addEventListener('click',function(e){
-    	var kujhwindow = Ti.UI.createWindow({
-            url:"kujh.js",
-            title:"KUJH-TV"
+	video.addEventListener('click',function(e){
+    	var videowindow = Ti.UI.createWindow({
+            url:"video.js",
+            title:"Video"
     });
-		Titanium.UI.currentTab.open(kujhwindow,{animated:true});
+		Titanium.UI.currentTab.open(videowindow,{animated:true});
 	});
-scrollView.add(kujh);
+scrollView.add(video);
 win.add(scrollView);

@@ -317,6 +317,10 @@ Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
 			var hours = date.getHours();
 			var minutes = date.getMinutes();
 			var hm = ((hours * 60)+minutes); //Returns how many minutes
+			var weekend = '';
+			if(date.getDay() == '4' || date.getDay() == '5' || date.getDay() == '6' || date.getDay() == '0'){
+				weekend = 'indeed';
+			}
 			function appendIterationTimes(array,iteration){
 				//http://stackoverflow.com/a/8069367 && http://stackoverflow.com/a/4822630
 				for (var i = array[0]; i <= 1439; i += iteration) {
@@ -416,7 +420,7 @@ Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
 					color:routeName,
 					width: response[dd].lineWidth,
 				};
-				if(Titanium.App.Properties.getString('sb'+routeName) === 'shown') {		
+				if(Titanium.App.Properties.getString('sb'+routeName) === 'shown' && weekend === 'indeed') {		
 					mapview.addRoute(newRoute);
 					mapview.addAnnotations(routeStops);
 				}
