@@ -3,12 +3,10 @@ var window = Titanium.UI.currentWindow;
 
 //Set up analytics
 Titanium.include('analytics.js');
-var analytics = new Analytics('UA-668650-1');
+var analytics = new Analytics('UA-668650-9');
 // Call the next function if you want to reset the analytics to a new first time visit.
-// This is useful for development only and should not go into a production app.
 //analytics.reset();
 
-// The analytics object functions must be called on app.js otherwise it will loose it's context
 Titanium.App.addEventListener('analytics_trackPageview', function(e){
 	analytics.trackPageview('/app' + e.pageUrl);
 });
@@ -27,7 +25,6 @@ Titanium.App.addEventListener('analytics_trackEvent', function(e){
 });
 
 
-// I've set a global Analytics object to contain the two functions to make it easier to fire the analytics events from other windows
 Titanium.App.Analytics = {
 	trackPageview:function(pageUrl){
 		Titanium.App.fireEvent('analytics_trackPageview', {pageUrl:pageUrl});
@@ -37,8 +34,7 @@ Titanium.App.Analytics = {
 	}
 }
 
-// Starts a new session as long as analytics.enabled = true
-// Function takes an integer which is the dispatch interval in seconds
+
 analytics.start(10);
 var tabGroup = Ti.UI.createTabGroup();
 
