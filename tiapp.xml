@@ -17,7 +17,7 @@
     </deployment-targets>
     <id>com.udk.mobile</id>
     <name>University Daily Kansan</name>
-    <version>2.3</version>
+    <version>2.4</version>
     <publisher>Tim Shedor</publisher>
     <url>http://kansan.com</url>
     <description>The University Daily Kansan is a student-run publication servicing the University of Kansas community. This app was produced by Tim Shedor, Web Editor Fall 2011.</description>
@@ -48,7 +48,7 @@
         </orientations>
     </iphone>
     <android>
-        <manifest android:versionCode="13" android:versionName="2.3" xmlns:android="http://schemas.android.com/apk/res/android">
+        <manifest android:versionCode="14" android:versionName="2.4" xmlns:android="http://schemas.android.com/apk/res/android">
             <supports-screens android:anyDensity="false"
                 android:largeScreens="true" android:normalScreens="true" android:smallScreens="false"/>
             <tool-api-level>8</tool-api-level>
