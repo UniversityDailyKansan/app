@@ -12,6 +12,7 @@ if(Ti.Platform.osname=='android') {
 // HORIZONTAL SCROLLING TABS
 //
 var scrollView = Titanium.UI.createScrollView({
+	anchorPoint:{x:.5,y:.5},
 	contentWidth:400,
 	contentHeight:40,
 	top:0,
@@ -22,6 +23,34 @@ var scrollView = Titanium.UI.createScrollView({
 });
 
 win.add(scrollView);
+
+var upArrow = Titanium.UI.createView({
+	backgroundImage:'/images/currentTriangle.png',
+		top:30,
+		left:Ti.App.arrowLV,
+		height: 10,
+		width:20
+});
+
+var shadowLeft = Titanium.UI.createView({
+	backgroundImage:'/images/toolbarShadowLeft.png',
+	top:0,
+	left:0,
+	height:40,
+	width:80
+});
+
+win.add(shadowLeft);
+
+var shadowRight = Titanium.UI.createView({
+	backgroundImage:'/images/toolbarShadowRight.png',
+	top:0,
+	right:0,
+	height:40,
+	width:80
+});
+
+//win.add(shadowRight);
 
 var news = Titanium.UI.createLabel({
 			text:'Your News',
@@ -48,6 +77,7 @@ var news = Titanium.UI.createLabel({
             title:"Your News"
     });
 		Titanium.UI.currentTab.open(newswindow,{animated:true});
+		Ti.App.arrowLV = 90;
 	});
 scrollView.add(news);
 var location = Titanium.UI.createLabel({
@@ -75,6 +105,7 @@ var location = Titanium.UI.createLabel({
             title:"Your Town"
     });
 		Titanium.UI.currentTab.open(locationwindow,{animated:true});
+		Ti.App.arrowLV = 230;
 	});
 scrollView.add(location);
 var settings = Titanium.UI.createLabel({
@@ -102,7 +133,9 @@ var settings = Titanium.UI.createLabel({
             title:"Preferences"
     });
 		Titanium.UI.currentTab.open(settingswindow,{animated:true});
+		Ti.App.arrowLV = 340;
 	});
 scrollView.add(settings);
 
 win.add(scrollView);
+win.add(upArrow);

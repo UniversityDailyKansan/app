@@ -1,6 +1,9 @@
 Titanium.UI.setBackgroundColor('#fff');
 var window = Titanium.UI.currentWindow;
 
+Ti.App.arrowLeft = 70; //this is for the news_toolbar
+Ti.App.arrowLV = 90; //for LV_toolbar
+
 //Set up analytics
 Titanium.include('analytics.js');
 var analytics = new Analytics('UA-668650-9');
@@ -129,7 +132,6 @@ tabGroup.addEventListener('open', checkReminderToRate);
 /********************************************/
 /************* NOTIFICATIONS ****************/
 /********************************************/	
-
 
 tabGroup.open();
 
@@ -272,7 +274,7 @@ var typeData = [
 			//At the bottom, to make this intuitive, we're adding a Save button so users believe their preferences are saved. Also, the save button sets a Properties string so this window doesn't have to come up again
             var save_bar = Titanium.UI.createButton({
 				bottom:0,
-				height:title_bar_height,
+				height:40,
 				width:'100%',
 				backgroundImage: bgImage,
 				backgroundSelectedImage: default_button_selected,
@@ -281,19 +283,36 @@ var typeData = [
             });
            	
 			var save_text = Titanium.UI.createLabel({
-				shadowColor: shadow_color,
-				shadowOffset: shadow_offset,
 				color:'#fff',
-				height:title_bar_height,
+				height:40,
 				text:'Save',
 				textAlign:'center',
-				width:phone_width,
+				width:'100%',
 				font:{
 					fontFamily:cond,
 					fontSize:30,
 				}
 			});
-			save_bar.add(save_text);
+			//save_bar.add(save_text);
+			
+			var saveButton = Ti.UI.createButton({
+					bottom: 30,
+					clickName:'Save',
+					height:70,
+					width:140,
+					title:'Save',
+					backgroundColor:'transparent',
+					borderColor:'#777777',
+					borderWidth:2,
+					touchEnabled:true
+					
+			});
+			
+			saveButton.addEventListener('click',function(e){
+				
+				first_settings_window.close();
+			});		
+			
 		//Blank response if it's already been opened. Again, (!opened) is inconsistent for me.
 		if(opened){} else {
 			for (var b=0; b < typeData.length; b++) {
@@ -303,7 +322,7 @@ var typeData = [
 			
 			heading_bar.add(heading_text);
 			first_settings_window.add(heading_bar);
-			first_settings_window.add(save_bar);
+			first_settings_window.add(saveButton);
 
 			prefArray = [];	
 
