@@ -1,14 +1,12 @@
 Titanium.UI.setBackgroundColor('#fff');
 var window = Titanium.UI.currentWindow;
 
-Ti.App.arrowLeft = 70; //this is for the news_toolbar
-Ti.App.arrowLV = 90; //for LV_toolbar
+Titanium.App.Properties.setString('currNewsTB', 35);
+Titanium.App.Properties.setString('currLVTB', 75);
 
 //Set up analytics
 Titanium.include('analytics.js');
 var analytics = new Analytics('UA-668650-9');
-// Call the next function if you want to reset the analytics to a new first time visit.
-//analytics.reset();
 
 Titanium.App.addEventListener('analytics_trackPageview', function(e){
 	analytics.trackPageview('/app' + e.pageUrl);
@@ -37,51 +35,43 @@ Titanium.App.Analytics = {
 	}
 }
 
-
 analytics.start(10);
 var tabGroup = Ti.UI.createTabGroup();
 
-// create news window
 var newswin = Ti.UI.createWindow({  
     title:'Latest News',
 	url:'news/latest.js',
 });
 
-// craete newstab
 var newstab = Ti.UI.createTab({  
     icon:'tabs/kansan.png',
     title:'News',
     window:newswin
 });
 
-// create kjhk window
 var kjhkwin = Ti.UI.createWindow({  
     title:'KJHK Live',
 	url:'kjhk/live.js'
 });
 
 
-// craete tab2
 var kjhktab = Ti.UI.createTab({ 
     icon:'tabs/radio.png',
     title:'KJHK',
     window:kjhkwin
 });
 
-// create ffa window
 var ffawin = Ti.UI.createWindow({  
     title:'Free For All',
 	url:'ffa.js'
 });
 
-// craete ffatab
 var ffatab = Ti.UI.createTab({ 
     icon:'tabs/ffa.png',
     title:'Free For All',
     window:ffawin
 });
 
-// create bargainwin window
 var lvwin = Ti.UI.createWindow({  
     title:'LarryvilleKU',
 	url:'larryville/map.js'
@@ -137,12 +127,16 @@ lvwin.addEventListener('open', howToNotification);
 tabGroup.open();
 
 function howToNotification() {
-	var howToDialog = Ti.UI.createAlertDialog({
-		title: 'How to use LarryvilleKU',
-		message: 'Customize your map by altering the settings to show what news, events, and deals you want to see.',
-		buttonNames: ['Close']
-	});
-	howToDialog.show();
+	var hasLVBeenOpened = Ti.App.Properties.getString('openLVOnce');
+    if (!hasLVBeenOpened) {
+        Ti.App.Properties.setString('openLVOnce', 'opened');
+        var howToDialog = Ti.UI.createAlertDialog({
+        	title: 'How to use LarryvilleKU',
+        	message: 'Customize your map by altering the settings to show what news, events, and deals you want to see.',
+        	buttonNames: ['Close']
+      	});
+      	howToDialog.show();
+   }
 };
 
 function checkReminderToRate() {
