@@ -1,40 +1,13 @@
 var win = Ti.UI.currentWindow;
 
-/*********** PREFS **********/
-
-var feed_toolbar_image_height = 35;
-var feed_toolbar_image_width = 35;
-var feed_toolbar_image_bottom = 2;
 var title_bar_height = 40;
-var feed_view_name = 'Your News';
-var settings_view_width = 250;
-var type_view_width = 250;
-if (Titanium.Platform.osname == 'ipad') {
-	settings_view_width = 600;
-	type_view_width = 600;
-};
-var bgImage = 'images/full_bg.png';
-var phone_width = Titanium.Platform.displayCaps.platformWidth;
 var reduced_phone_width = ((Titanium.Platform.displayCaps.platformWidth) - 20);
-var double_phone_width = (phone_width + phone_width);
-
-//Close arrow appears in a few places
-var default_button_bg = 'images/transparent_bg.png';
-var default_button_selected = '';
-var default_left_arrow = 'images/back_arrow.png';
-var default_close_dimensions = '30';
-var default_close_from_top = '15';
 
 //Get yo style on. This changes mostly things in the feed_view detail panes.
 var col1 = '#c82c2c'; //Red
-var col2 = '#6082A6'; //Regular blue
 var background_color = '#1D243B'; //Dark blue
 var light_grey = '#e1e1e1'; //Light grey
 var darker_grey = '#555'; //Grey, little darker
-var link_blue = '#2A85E8'; //Light blue
-var shadow_color = '#222'; //Set on heading titles
-var shadow_offset = {x: -2, y: -2}; //Set on heading titles
-var row_bgImage = 'images/row_bg.png'; //Set on heading backgrounds
 
 var typeData = [
 	{ prettyName:'Safebus Red', hasChild:true, slug:'sbred', desc:'Safebus Red', },
@@ -278,9 +251,9 @@ win.backgroundColor = light_grey;
 				mapType: Titanium.Map.STANDARD_TYPE,
 				animate:true,
 				region: {
-					latitude:38.9622547128423, //CHANGE THIS
-					longitude:-95.24254439999999, //CHANGE THIS
-					latitudeDelta:0.02, //Your zoom levels
+					latitude:38.9622547128423,
+					longitude:-95.24254439999999,
+					latitudeDelta:0.02,
 					longitudeDelta:0.02
 				},
 				regionFit:true,
@@ -288,7 +261,7 @@ win.backgroundColor = light_grey;
 				visible: true,
 				top:title_bar_height,
 				annotations:annotations,
-				zoom:20, //Don't know why this is here, but it can't hurt.
+				zoom:20,
 			});
 			Titanium.Geolocation.distanceFilter = 10;
 Titanium.Geolocation.purpose = "Recieve User Location";
@@ -485,7 +458,7 @@ Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
 						borderColor:'#999',
 						borderWidth:3,
 					});
-					Titanium.Geolocation.distanceFilter = 10; //Not sure what this does, but it doesn't hurt
+					Titanium.Geolocation.distanceFilter = 10;
 				
 					detail_window.add(detail_mapview);
 				};
@@ -526,7 +499,7 @@ Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
 		win.add(refresh);
 			Ti.include('larryville_toolbar.js');
 
-			win.add(mapview); //Add dat map to the screen
+			win.add(mapview); 
  			
 				}
 		catch(E){
