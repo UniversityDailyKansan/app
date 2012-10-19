@@ -44,7 +44,7 @@ var typeData = [
 	{ prettyName:'Tweets', hasChild:true, slug:'tweets', desc:'Tweet with your location on in your latest 140-composition and hashtag #larryvilleku', },
 	//{ prettyName:'Photos from Flickr', hasChild:true, slug:'photos', desc:'Geotagged hipster pics and snapshots of Lawrence', },
 	//{ prettyName:'Police Citations', hasChild:true, slug:'police-citations', desc:'Everything from an unpaid meter to an MIP to speeding on K-10', },
-	{ prettyName:'Accidents', hasChild:true, slug:'car-accidents', desc:'Drive safely. Every accident within the city limits is mapped', },
+	//{ prettyName:'Accidents', hasChild:true, slug:'car-accidents', desc:'Drive safely. Every accident within the city limits is mapped', },
 ];
 
 var dom = 'DIN 1451 Std';
@@ -308,6 +308,37 @@ feed_rows.addEventListener('click',function(e) {
 				};
             	detail_window.open({modal:true});
        		});
+       		
+				var refresh = Ti.UI.createView({
+				height:40,
+				width:40,
+				layout:'vertical',
+				left:0,
+				top:0,
+				backgroundColor:'#10354c'
+			});
+ 			var refresh_circle = Ti.UI.createImageView({
+				image:'../images/refresh.png',
+				left:8,
+				top:8,
+				height:25,
+				width:25
+			});
+			refresh.add(refresh_circle);
+				
+            refresh.addEventListener('click', function(){
+            	feed = website+"/api/dev1/items.json?limit="+limit_value;
+            	win.remove(mapview);
+				actInd.show();
+					setTimeout(function()
+					{
+						actInd.hide();
+					},1000);
+				getPreferences();
+                xhr.open("GET",feed);
+ 				xhr.send();
+            });
+		win.add(refresh);
        		Ti.include('larryville_toolbar.js');
        		var refresh = Ti.UI.createView({
 				height:40,
