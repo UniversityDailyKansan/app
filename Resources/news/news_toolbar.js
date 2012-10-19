@@ -53,6 +53,29 @@ var shadowRight = Titanium.UI.createView({
 
 win.add(shadowRight);
 
+scrollView.addEventListener('scroll', function(e)
+{
+    Ti.API.info('x ' + e.x + ' y ' + e.y);
+
+    if (e.x > 20)
+    {
+        shadowLeft.show();
+    }
+    else
+    {
+        shadowLeft.hide();
+    }
+    if (e.x < 160)
+    {
+        shadowRight.show();
+    }
+    else
+    {
+        shadowRight.hide();
+    }
+
+});
+
 var latest = Titanium.UI.createLabel({
 			text:'Latest',
 			left: 10,

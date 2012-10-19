@@ -69,19 +69,23 @@ typeArray = [];
 				
 				typeRow.add(typeIcon);
 				typeRow.add(typeHeading);
-				
+				typeRow.slug = typeData[t].slug;
 				typeRow.hasChild=false;
- 				typeRow.leftImage = '../images/shown.png';	
+ 				if (Titanium.App.Properties.getString(typeRow.slug) == 'hidden') { //This will check to see what the setting currently is...
+					typeRow.leftImage = '../images/hidden.png'; //Changes to red to signify it's hidden
+				} else {
+					typeRow.leftImage = '../images/shown.png'; //Changes to red to signify it's hidden
+				};
  				 				
 				typeRow.className = 'typeRow';
  				typeRow.heading = typeData[t].heading;
 
 				//typeArray.push(typeRow);
 				
-				typeArray[t++] = typeRow;
+				typeArray[t] = typeRow;
 				typeRow.backgroundColor = 'white';
 				//So that the event listener can adjust properties
-				typeRow.slug = typeData[t].slug;
+				
 				typeRow.backgroundColor = typeRow.backgroundColor;
 				typeRow.id = t;
 				
@@ -108,11 +112,11 @@ typeArray = [];
 				if (Titanium.App.Properties.getString(e.row.slug) == 'hidden') {
 					Titanium.App.Properties.setString(e.row.slug, 'shown');
 					e.row.leftImage = '../images/shown.png'; //Changes to red to signify it's hidden
-					Titanium.App.Analytics.trackPageview('/view-options/'+e.row.typeStatus+'shown'); //Fire analytics listener. From a customer service standpoint, to know what people  do like to see on their map.
+					Titanium.App.Analytics.trackPageview('/view-options/'+e.row.slug+'shown'); //Fire analytics listener. From a customer service standpoint, to know what people  do like to see on their map.
 				} else {
 					Titanium.App.Properties.setString(e.row.slug, 'hidden');
 					e.row.leftImage = '../images/hidden.png'; //Changes to red to signify it's hidden
-					Titanium.App.Analytics.trackPageview('/view-options/'+e.row.typeStatus+'hidden'); //Fire analytics listener. From a customer service standpoint, to know what people don't like to see on their map.
+					Titanium.App.Analytics.trackPageview('/view-options/'+e.row.slug+'hidden'); //Fire analytics listener. From a customer service standpoint, to know what people don't like to see on their map.
 				};
 			});
 			

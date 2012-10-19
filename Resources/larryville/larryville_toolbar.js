@@ -37,7 +37,8 @@ var shadowLeft = Titanium.UI.createView({
 	top:0,
 	left:0,
 	height:40,
-	width:80
+	width:80,
+	visible:false
 });
 
 win.add(shadowLeft);
@@ -47,10 +48,11 @@ var shadowRight = Titanium.UI.createView({
 	top:0,
 	right:0,
 	height:40,
-	width:80
+	width:80,
+	visible:false
 });
 
-//win.add(shadowRight);
+win.add(shadowRight);
 
 var news = Titanium.UI.createLabel({
 			text:'Your News',
@@ -136,6 +138,55 @@ var settings = Titanium.UI.createLabel({
 		Ti.App.arrowLV = 340;
 	});
 scrollView.add(settings);
+
+var safeRide = Titanium.UI.createLabel({
+			text:'Call SafeRide',
+			left:370,
+			height:30,
+			color:'#f9f9f9',
+			font:{
+				fontSize:22,
+				fontFamily:dom,
+			},
+			width:'auto',
+			verticalAlign:'center',
+			textAlign:'center',
+			shadowColor:'#000000',
+			shadowOffset:{x:1, y:-1},
+			top:10
+		});
+	safeRide.addEventListener('click', function(e){
+    	Titanium.App.Analytics.trackPageview('/larryville/safeRide');
+	});
+	safeRide.addEventListener('click',function(e){
+    	var the_number = '7858647233';
+		Ti.Platform.openURL('tel:+7858647233');
+		Ti.App.arrowLV = 400;
+	});
+scrollView.add(safeRide);
+
+scrollView.addEventListener('scroll', function(e)
+{
+    Ti.API.info('x ' + e.x + ' y ' + e.y);
+
+    if (e.x > 20)
+    {
+        shadowLeft.show();
+    }
+    else
+    {
+        shadowLeft.hide();
+    }
+    if (e.x < 160)
+    {
+        shadowRight.show();
+    }
+    else
+    {
+        shadowRight.hide();
+    }
+
+});
 
 win.add(scrollView);
 win.add(upArrow);
