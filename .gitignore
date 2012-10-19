@@ -2,3 +2,4 @@ build
 .settings
 .fastdev.lock
 build.log
+.project
