@@ -313,18 +313,17 @@ feed_rows.addEventListener('click',function(e) {
 				height:40,
 				width:40,
 				layout:'vertical',
-				left:0,
-				top:0,
-				backgroundColor:'#10354c'
+				left:60,
+				top:0				
 			});
  			var refresh_circle = Ti.UI.createImageView({
 				image:'../images/refresh.png',
-				left:8,
+				left:68,
 				top:8,
 				height:25,
 				width:25
 			});
-			refresh.add(refresh_circle);
+			refresh.add(refresh_circle);			
 				
             refresh.addEventListener('click', function(){
             	feed = website+"/api/dev1/items.json?limit="+limit_value;
@@ -339,6 +338,7 @@ feed_rows.addEventListener('click',function(e) {
  				xhr.send();
             });
 		win.add(refresh);
+
 win.add(feed_rows);
 				}
 		catch(E){
@@ -350,4 +350,5 @@ win.add(feed_rows);
 	win.addEventListener('focus', function(e){
     	Titanium.App.Analytics.trackPageview('/larryville/news');
 	});
+
 			

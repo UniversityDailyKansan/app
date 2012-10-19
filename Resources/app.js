@@ -128,12 +128,22 @@ tabGroup.addTab(moretab);
 
 lvwin.addEventListener('focus', firstPreferences);
 tabGroup.addEventListener('open', checkReminderToRate);
+lvwin.addEventListener('open', howToNotification);
 //tabGroup.addEventListener('open', checkappUpdated);
 /********************************************/
 /************* NOTIFICATIONS ****************/
 /********************************************/	
 
 tabGroup.open();
+
+function howToNotification() {
+	var howToDialog = Ti.UI.createAlertDialog({
+		title: 'How to use LarryvilleKU',
+		message: 'Customize your map by altering the settings to show what news, events, and deals you want to see.',
+		buttonNames: ['Close']
+	});
+	howToDialog.show();
+};
 
 function checkReminderToRate() {
     var now = new Date().getTime();
@@ -296,16 +306,17 @@ var typeData = [
 			//save_bar.add(save_text);
 			
 			var saveButton = Ti.UI.createButton({
-					bottom: 30,
-					clickName:'Save',
-					height:70,
-					width:140,
-					title:'Save',
-					backgroundColor:'transparent',
-					borderColor:'#777777',
-					borderWidth:2,
-					touchEnabled:true
-					
+					bottom:0,
+					height:40,
+					width:'100%',
+					text:'Save',
+					textAlign:'center',
+					backgroundColor:'#1D243B',
+					color:'#fff',
+					font:{
+						fontFamily:cond,
+						fontSize:24,
+					},
 			});
 			
 			saveButton.addEventListener('click',function(e){
