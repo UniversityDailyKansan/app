@@ -16,7 +16,7 @@ var scrollView = Titanium.UI.createScrollView({
 	contentWidth:990,
 	contentHeight:40,
 	top:0,
-	left:40,
+	left:35,
 	height:40,
 	width:'100%',
 	backgroundColor:'#10354c'
@@ -25,20 +25,20 @@ win.add(scrollView);
 
 var upArrow = Titanium.UI.createView({
 	backgroundImage:'/images/currentTriangle.png',
-		top:30,
-		left:Ti.App.arrowLeft,
-		height: 10,
-		width:20
+	top:30,
+	left:Titanium.App.Properties.getString('currNewsTB'),
+	height: 10,
+	width:20
 });
 
-//win.add(upArrow);
+scrollView.add(upArrow);
 
 var shadowLeft = Titanium.UI.createView({
 	backgroundImage:'/images/toolbarShadowLeft.png',
 	top:0,
-	left:0,
+	left:35,
 	height:40,
-	width:80
+	width:40
 });
 
 win.add(shadowLeft);
@@ -48,50 +48,40 @@ var shadowRight = Titanium.UI.createView({
 	top:0,
 	right:0,
 	height:40,
-	width:80
+	width:40
 });
 
 win.add(shadowRight);
 
-scrollView.addEventListener('scroll', function(e)
-{
-    Ti.API.info('x ' + e.x + ' y ' + e.y);
-
-    if (e.x > 20)
-    {
-        shadowLeft.show();
-    }
-    else
-    {
-        shadowLeft.hide();
-    }
-    if (e.x < 160)
-    {
-        shadowRight.show();
-    }
-    else
-    {
-        shadowRight.hide();
-    }
-
+scrollView.addEventListener('scroll', function(e) {
+	if (e.x > 20) {
+		shadowLeft.show();
+	} else {
+		shadowLeft.hide();
+	}
+	if (e.x < 760) {
+		shadowRight.show();
+	} else {
+		shadowRight.hide();
+	}
 });
 
 var latest = Titanium.UI.createLabel({
-			text:'Latest',
-			left: 10,
-			height:30,
-			color:'#f9f9f9',
-			font:{
-				fontSize:22,
-				fontFamily:dom,
-			},
-			width:'auto',
-			verticalAlign:'center',
-			textAlign:'center',
-			shadowColor:'#000000',
-			shadowOffset:{x:1, y:-1},
-			top:10
-		});	
+	text:'Latest',
+	left: 10,
+	height:30,
+	color:'#f9f9f9',
+	font:{
+		fontSize:22,
+		fontFamily:dom,
+	},
+	width:'auto',
+	verticalAlign:'center',
+	textAlign:'center',
+	shadowColor:'#000000',
+	shadowOffset:{x:1, y:-1},
+	top:10
+});	
 		
 	latest.addEventListener('click', function(e){
     	Titanium.App.Analytics.trackPageview('/news/latest');
@@ -102,8 +92,7 @@ var latest = Titanium.UI.createLabel({
             title:"Latest"
     });
 		Titanium.UI.currentTab.open(latestwindow,{animated:true});
-		Ti.App.arrowLeft=70;
-		//win.add(upArrow);
+		Titanium.App.Properties.setString('currNewsTB', 35);
 	});
 	
 scrollView.add(latest);
@@ -136,8 +125,7 @@ var featured = Titanium.UI.createLabel({
             title:"Featured"
     });
 		Titanium.UI.currentTab.open(featuredwindow,{animated:true});
-		Ti.App.arrowLeft=175;
-		//win.add(upArrow);
+		Titanium.App.Properties.setString('currNewsTB', 140);
 	});
 scrollView.add(featured);
 			
@@ -169,8 +157,7 @@ var news = Titanium.UI.createLabel({
             title:"News"
     });
 		Titanium.UI.currentTab.open(newswindow,{animated:true});
-		Ti.App.arrowLeft = 275;
-		//win.add(upArrow);
+		Titanium.App.Properties.setString('currNewsTB', 240);
 	});
 scrollView.add(news);
 			
@@ -202,8 +189,7 @@ var opinion = Titanium.UI.createLabel({
             title:"Opinion"
     });
 		Titanium.UI.currentTab.open(opinionwindow,{animated:true});
-		Ti.App.arrowLeft = 370;
-		//win.add(upArrow);
+		Titanium.App.Properties.setString('currNewsTB', 335);
 	});
 scrollView.add(opinion);
 			
@@ -235,8 +221,7 @@ var sports = Titanium.UI.createLabel({
             title:"Sports"
     });
 		Titanium.UI.currentTab.open(sportswindow,{animated:true});
-		Ti.App.arrowLeft = 460;
-		//win.add(upArrow);
+		Titanium.App.Properties.setString('currNewsTB', 425);
 	});
 scrollView.add(sports);
 			
@@ -268,8 +253,7 @@ var photo = Titanium.UI.createLabel({
             title:"Photo"
     });
 		Titanium.UI.currentTab.open(photowindow,{animated:true});
-		Ti.App.arrowLeft = 550;
-		//win.add(upArrow);
+		Titanium.App.Properties.setString('currNewsTB', 515);
 	});
 scrollView.add(photo);
 			
@@ -301,8 +285,7 @@ var feature = Titanium.UI.createLabel({
             title:"Feature"
     });
 		Titanium.UI.currentTab.open(featurewindow,{animated:true});
-		Ti.App.arrowLeft = 635;
-		//win.add(upArrow);
+		Titanium.App.Properties.setString('currNewsTB', 600);
 	});
 scrollView.add(feature);
 
@@ -334,8 +317,7 @@ var entertainment = Titanium.UI.createLabel({
             title:"Entertainment"
     });
 		Titanium.UI.currentTab.open(entertainmentwindow,{animated:true});
-		Ti.App.arrowLeft = 760;
-		//win.add(upArrow);
+		Titanium.App.Properties.setString('currNewsTB', 725);
 	});
 scrollView.add(entertainment);
 
@@ -355,9 +337,6 @@ var video = Titanium.UI.createLabel({
 			shadowOffset:{x:1, y:-1},
 			top:10
 		});
-		
-
-			
 	video.addEventListener('click', function(e){
     	Titanium.App.Analytics.trackPageview('/news/video');
 	});
@@ -367,10 +346,9 @@ var video = Titanium.UI.createLabel({
             title:"Video"
     });
 		Titanium.UI.currentTab.open(videowindow,{animated:true});
-		Ti.App.arrowLeft = 890;
-		//win.add(upArrow);
+		Titanium.App.Properties.setString('currNewsTB', 855);
 	});
 scrollView.add(video);
-			
-win.add(scrollView);
-win.add(upArrow);
+scrollView.scrollTo((Titanium.App.Properties.getString('currNewsTB') - 50), 0);
+shadowLeft.hide();
+
