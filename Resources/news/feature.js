@@ -143,7 +143,6 @@ Titanium.UI.iPhone.appBadge=Titanium.UI.iPhone.appBadge-1;
 					top:6,
 					left:8,
 					right:8,
-					color:black,
 					font:{
 						fontSize:18,
 						fontFamily:dom,
