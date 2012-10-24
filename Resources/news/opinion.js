@@ -140,6 +140,7 @@ Titanium.UI.iPhone.appBadge=Titanium.UI.iPhone.appBadge-1;
 				var story_headline = Ti.UI.createLabel({
 					text:headline,
 					height:46,
+					color:'#000000',
 					top:6,
 					left:8,
 					right:8,
