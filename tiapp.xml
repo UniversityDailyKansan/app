@@ -7,7 +7,7 @@
     <property name="acs-oauth-secret-production" type="string">ZKZFhhftRTPpXlHPk7CLE4Cry66w52Gj</property>
     <property name="acs-oauth-key-production" type="string">Qb5zwVAHxez7ShL6uZooqXn3yf8AdDY3</property>
     <property name="acs-api-key-production" type="string">smZTukdehGaSTMwBxIMhrmOfhWReNWAs</property>
-    <sdk-version>2.1.0.GA</sdk-version>
+    <sdk-version>2.1.1.GA</sdk-version>
     <deployment-targets>
         <target device="mobileweb">false</target>
         <target device="iphone">true</target>
