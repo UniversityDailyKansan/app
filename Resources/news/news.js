@@ -276,13 +276,20 @@ Titanium.UI.iPhone.appBadge=Titanium.UI.iPhone.appBadge-1;
 			var w = Ti.UI.createWindow({
 				title:section
 			});
+			var twitter_url = 'http://twitter.com/intent/tweet?text='+e.row.headline+'&url='+e.row.url+'&related=udk_news&via=udk_news';
+			var twitter_button = "http://kansan.com/assets/css/images/social/circle-twitter.png";
+			var twitter_share = "<a href='"+twitter_url+"' title='"+e.row.headline+"'><img src='"+twitter_button+"' height='20' width='20' alt='Share '"+e.row.headline+"' on Twitter' /></a>";
+			var facebook_button = "http://kansan.com/assets/css/images/social/circle-facebook.png";
+			var facebook_url = 'http://www.facebook.com/sharer/sharer.php?u='+e.row.url+'&t='+e.row.headline;
+			var facebook_share = "<a href='"+facebook_url+"' title='"+e.row.headline+"'><img src='"+facebook_button+"' height='20' width='20' alt='Share '"+e.row.headline+"' on Facebook' /></a>";
 			var articleContent = "<body style='"+font1+"; width:96%; margin:0 auto;font-size:15px;'><h3 style='font-size:25px;text-transform:uppercase;color:#358CCB;margin-top:10px;line-height:14px"+font2+"'>"+e.row.headline+"</h3><div style='font-size:16px;color:#999999;margin-top:-18px;'>By "+e.row.author;
-			articleContent += " | "+e.row.date+"</div>"+e.row.articleCopy+"</body>";
+			articleContent += "20 | "+e.row.date+twitter_share+facebook_share+"</div>"+e.row.articleCopy+"</body>";
 			var wb = Ti.UI.createWebView({
 				html:"<html><head><link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:700|Source+Sans+Pro:300,400' rel='stylesheet' type='text/css'><style>img{ max-width:100%; }</style></head>"+articleContent,
 				bottom:0,
 				scalesPageToFit:true
 			});
+
             w.add(wb);
             var b = Titanium.UI.createButton({
                 title:'Close',
