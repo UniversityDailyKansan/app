@@ -22,6 +22,14 @@ var scrollView = Titanium.UI.createScrollView({
 	width:'100%',
 	backgroundColor:'#10354c'
 });
+
+var tweetButton = Titanium.UI.createButton({
+	image: 'https://platform.twitter.com/widgets.js',
+	text: 'Tweet',
+})
+
+scrollview.add(tweetButton);
+
 var tableview = Titanium.UI.createTableView({
         		data:data,
         		top:40,
