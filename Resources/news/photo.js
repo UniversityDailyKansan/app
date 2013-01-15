@@ -287,6 +287,8 @@ Titanium.UI.iPhone.appBadge=Titanium.UI.iPhone.appBadge-1;
 			var wb = Ti.UI.createWebView({
 				html:"<html><head><link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:700|Source+Sans+Pro:300,400' rel='stylesheet' type='text/css'><style>img{ max-width:100%; }</style></head>"+articleContent,
 				bottom:0,
+				width:'100%',
+				scalesPageToFit:true
 			});
             w.add(wb);
             var b = Titanium.UI.createButton({

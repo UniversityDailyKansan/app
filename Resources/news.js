@@ -46,8 +46,10 @@ var tableview = Titanium.UI.createTableView({
 			var articleContent = "<body style='"+font1+"; width:94%; margin:0 auto;font-size:15px;'><h3 style='font-size:25px;text-transform:uppercase;color:#358CCB;margin-top:10px;line-height:14px"+font2+"'>"+e.row.headline+"</h3><div style='font-size:16px;color:#999999;margin-top:-18px;'>By "+e.row.author;
 			articleContent += " | "+e.row.date+"</div>"+e.row.articleCopy+"</body>";
 			var wb = Ti.UI.createWebView({
-				html:"<html><head><link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:700|Source+Sans+Pro:300,400' rel='stylesheet' type='text/css'><style>img{ max-width:100%; }</style></head>"+articleContent,
+				html:"<html><head><link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:700|Source+Sans+Pro:300,400' rel='stylesheet' type='text/css'><style>img{ max-width:100%; }</style><meta name='viewport' content='width=device-width, initial-scale=1.0' /></head>"+articleContent,
 				bottom:0,
+				width:'100%',
+				scalesPageToFit:true
 			});
             w.add(wb);
             var b = Titanium.UI.createButton({
