@@ -7,7 +7,7 @@
     <property name="acs-oauth-secret-production" type="string">ZKZFhhftRTPpXlHPk7CLE4Cry66w52Gj</property>
     <property name="acs-oauth-key-production" type="string">Qb5zwVAHxez7ShL6uZooqXn3yf8AdDY3</property>
     <property name="acs-api-key-production" type="string">smZTukdehGaSTMwBxIMhrmOfhWReNWAs</property>
-    <sdk-version>2.1.0.GA</sdk-version>
+    <sdk-version>2.1.4.GA</sdk-version>
     <deployment-targets>
         <target device="mobileweb">false</target>
         <target device="iphone">true</target>
@@ -17,7 +17,7 @@
     </deployment-targets>
     <id>com.udk.mobile</id>
     <name>University Daily Kansan</name>
-    <version>2.4.1</version>
+    <version>2.41</version>
     <publisher>Tim Shedor</publisher>
     <url>http://kansan.com</url>
     <description>The University Daily Kansan is a student-run publication servicing the University of Kansas community. This app was produced by Tim Shedor, Web Editor Fall 2011.</description>
