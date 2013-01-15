@@ -21,6 +21,7 @@ data.push(	{title:'About the University Daily Kansan', hasChild:true, color:'bla
 data.push(	{title:'About LarryvilleKU', hasChild:true, color:'black', test:'more/about_larryville.js'});
 //data.push(	{title:'About Bargains', hasChild:true, color:'black', test:'more/about_bargains.js'});
 data.push(	{title:'About KJHK Radio', hasChild:true, color:'black', test:'more/about_kjhk.js'});
+data.push(  {title:'KU Live', hasChild:true, color:'black', test:'more/live.js'});
 data.push(	{title:'Credits', hasChild:true, color:'black', test:'more/credits.js'});
 data.push(	{title:'User Policy', hasChild:true, color:'black', test:'more/policy.js'});
 
