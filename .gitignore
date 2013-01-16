@@ -1,5 +1,5 @@
-build
-.settings
-.fastdev.lock
+.DS_Store
 build.log
-.project
+build
+npm-debug.log
+tmp
