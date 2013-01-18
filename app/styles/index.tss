@@ -5,4 +5,9 @@
 	width: Ti.UI.SIZE,
 	height: Ti.UI.SIZE,
 	color: "#000"
-} 
+},
+"#callXhr" : {
+	"top":5,
+    "width":250,
+    "height":30
+}

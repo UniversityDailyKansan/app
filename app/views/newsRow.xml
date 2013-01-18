@@ -1,0 +1,15 @@
+<Alloy>
+	<TableViewRow class="newsItemRow" id="row">
+		<View class="newsItemShadow" />
+		<View id="newsItemView">
+			<ImageView id="thumbnail"/>
+			<Label id="newsStoryHeadline"/>
+			<View id="mewsStoryHeadlineBorder"/>
+			<Label id="newsExcerptView" />
+			<View id="newsMetaView">
+				<Label id="newsDate" />
+				<Label id="newsAuthor" />
+			</View>
+		</View>
+	</TableViewRow>
+</Alloy>

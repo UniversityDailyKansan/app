@@ -13,47 +13,28 @@ if(Ti.Platform.osname=='android') {
 	dom = 'DINMittelschriftStd';
 	cond = 'OpenSans-CondBold';
 	body = 'SourceSansPro-Regular';
-} 
+}
 
 Titanium.UI.iPhone.appBadge=Titanium.UI.iPhone.appBadge-1;
 	var data = [];
 	var xhr = Ti.Network.createHTTPClient();
 	xhr.timeout = 1000000;
 	xhr.open("GET", feed);
-		
+
 /*********LOAD INDICATOR**********/
 
-	var actInd = Titanium.UI.createActivityIndicator({ 
-		bottom:200, 
-		style:Titanium.UI.iPhone.ActivityIndicatorStyle.BIG, 
-		font: {
-			
-			fontSize:26,
-			fontWeight:'bold'
-		}, 
-		color: 'black', 
-		message: 'Loading...', 
-		width: 'auto', 
-	});
-	actInd.show();
-	
+
+
 	setTimeout(function() { actInd.hide(); },2000);
 	win.add(actInd);
-	
-	xhr.onerror = function() { 
-		Titanium.API.log(xhr.onerror);
-		actInd.hide();         
-		var no_internet = Titanium.UI.createAlertDialog({
-            title: 'No Internet Connection',
-            message: 'Sorry, but you\'re not connected to the internet, and we can\'t load the map information or feed view. Please try again when a internet connection is avaiable.',
-            buttonNames: ['Shucks',],
-        });
-        no_internet.show();
+
+	xhr.onerror = function() {
+
     };
 
 /**********ACTUAL API LOADING*************/
 
-	xhr.onload = function() {	
+	xhr.onload = function() {
 		try {
 			var stories = JSON.parse(this.responseText).posts;
 			var x = 0;
@@ -76,7 +57,7 @@ Titanium.UI.iPhone.appBadge=Titanium.UI.iPhone.appBadge-1;
 				var author = stories[i].author.nickname;
 				var thumbheight = 0;
 				if(stories[i].attachments){
-					var attMeta = stories[i].attachments; 
+					var attMeta = stories[i].attachments;
 					for(var v = 0; v < attMeta.length; v++){
 						if(attMeta[v].mime_type === 'image/png' || attMeta[v].mime_type === 'image/jpg' || attMeta[v].mime_type === 'image/jpeg' || attMeta[v].mime_type === 'image/gif'){
 							var thumbnail = attMeta[v].images.medium.url;
@@ -105,100 +86,42 @@ Titanium.UI.iPhone.appBadge=Titanium.UI.iPhone.appBadge-1;
 				month = month.replace('12','Dec');
 				var day = date_raw.substring(8,10);
 				var date = month+' '+day;
-				
+
 				var row = Ti.UI.createTableViewRow({
-					height:159+thumbheight, 
-					backgroundColor:'transparent', 
-					backgroundColor:'transparent', 
-					transparentBackground:true
+					height:159+thumbheight,
 				});
-				
+
 				var newsitem_view = Ti.UI.createView({
 					height:144+thumbheight,
-					layout:'vertical',
-					left:10,
-					top:10,
-					bottom:5,
-					right:10,
-					backgroundColor:'white',
-					borderRadius:4,
-					borderColor:'#dedede',
-					borderWidth:0,
 				});
-				
+
 				var newsitem_shadow = Ti.UI.createView({
-					backgroundColor:'#c9c9c9',
 					height:144+thumbheight,
-					top:12,
-					right:8,
-					left:11,
-					bottom:5,
-					borderRadius:4,
-					layout:'vertical',
 				});
-			
+
 				var story_headline = Ti.UI.createLabel({
 					text:headline,
-					height:46,
-					color:'#000000',
-					top:6,
-					left:8,
-					right:8,
-					font:{
-						fontSize:18,
-						fontFamily:dom,
-					}
 				});
-				
+
 				var story_headline_border = Ti.UI.createView({
-					height:1,
-					backgroundColor:'#e9e9e9',
-					top:2,
-					left:0,
-					right:0,
 				});
-				
+
 				var excerpt_view = Ti.UI.createLabel({
 					text:excerpt,
-					height:60,
-					left:8,
-					right:8,
-					top:2,
-					font:{
-						fontSize:14,
-						fontFamily:body,
-					},
-					color:'#888888',
 				});
-				
+
 				var meta_view = Ti.UI.createView({
-					height:22,
-					backgroundColor:'#dedede',
-					left:0,
-					right:0,
-					top:5,
+
 				});
-				
+
 				var date_label = Ti.UI.createLabel({
 					text:date,
-					color:'#777777',
-					top:2,
-					left:8,
-					font:{
-						fontSize:14,
-					}
 				});
-				
+
 				var author_label = Ti.UI.createLabel({
 					text:author,
-					color:'#777777',
-					top:2,
-					right:8,
-					font:{
-						fontSize: 13,
-					}
 				});
-				
+
 				if(thumbnail){
 					var thumbnail_view = Ti.UI.createImageView({
 						image:thumbnail,
@@ -212,7 +135,7 @@ Titanium.UI.iPhone.appBadge=Titanium.UI.iPhone.appBadge-1;
 					excerpt_view.top = 0;
 					meta_view.top = 2;
 				}
-	
+
 				newsitem_view.add(story_headline);
 				newsitem_view.add(story_headline_border);
 				newsitem_view.add(excerpt_view);
@@ -238,9 +161,9 @@ Titanium.UI.iPhone.appBadge=Titanium.UI.iPhone.appBadge-1;
         		transparentBackground:true,
         		separatorColor:'transparent',
         	});
-        	
+
         	win.add(tableview);
-			
+
 			var refresh = Ti.UI.createView({
 				height:40,
 				width:40,
@@ -257,7 +180,7 @@ Titanium.UI.iPhone.appBadge=Titanium.UI.iPhone.appBadge-1;
 				width:25
 			});
 			refresh.add(refresh_circle);
-				
+
             refresh.addEventListener('click', function(){
             	win.remove(tableview);
 				actInd.show();
@@ -271,7 +194,7 @@ Titanium.UI.iPhone.appBadge=Titanium.UI.iPhone.appBadge-1;
 		win.add(refresh);
    		Ti.include('news_toolbar.js');
    		Ti.include('../master_image.js');
-		
+
 		tableview.addEventListener('click',function(e) {
 			var w = Ti.UI.createWindow({
 				title:section

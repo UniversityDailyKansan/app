@@ -1,0 +1,100 @@
+".container": {
+	backgroundColor: "white"
+},
+".newsItemRow": {
+	backgroundColor:'transparent',
+	backgroundColor:'transparent',
+	transparentBackground:true
+},
+"#newsItemView": {
+	layout:'vertical',
+	left:10,
+	top:10,
+	bottom:5,
+	right:10,
+	backgroundColor:'white',
+	borderRadius:4,
+	borderColor:'#dedede',
+	borderWidth:0,
+},
+".newsItemShadow": {
+	backgroundColor:'#c9c9c9',
+	top:12,
+	right:8,
+	left:11,
+	bottom:5,
+	borderRadius:4,
+	layout:'vertical',
+},
+"#newsStoryHeadline": {
+	height:46,
+	color:'#000000',
+	top:6,
+	left:8,
+	right:8,
+	font:{
+		fontSize:18,
+		fontFamily:'DINMittelschriftStd',
+	}
+},
+"#newsStoryHeadlineBorder": {
+	height:1,
+	backgroundColor:'#e9e9e9',
+	top:2,
+	left:0,
+	right:0,
+},
+"#newsExcerptView": {
+	height:60,
+	left:8,
+	right:8,
+	top:2,
+	color:'#888888',
+	font:{
+		fontSize:14,
+		fontFamily:'SourceSansPro-Regular',
+	},
+},
+"#newsMetaView": {
+	height:22,
+	backgroundColor:'#dedede',
+	left:0,
+	right:0,
+	top:5,
+},
+"#newsDate": {
+	color:'#777777',
+	top:2,
+	left:8,
+	font:{
+		fontSize:14,
+	}
+},
+"#newsAuthor": {
+	color:'#777777',
+	top:2,
+	right:8,
+	font:{
+		fontSize: 13,
+	}
+},
+"#newsThumbnailView": {
+	left:6,
+	top:7,
+	right:6,
+},
+"#refreshButton": {
+	height:40,
+	width:40,
+	layout:'vertical',
+	left:0,
+	top:0,
+	backgroundColor:'#10354c'
+},
+"#refreshCircle": {
+	image:'../assets/images/refresh.png',
+	left:8,
+	top:8,
+	height:25,
+	width:25
+}

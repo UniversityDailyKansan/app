@@ -1,4 +1,7 @@
 <Alloy>
-	<View class="container">
-	</View>
+	<Window>
+		<TableView id="jobsTable" onClick="onRowClick">
+			<TableViewSection id="activeSection" />
+		</TableView>
+	</Window>
 </Alloy>
