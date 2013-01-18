@@ -1,3 +1,7 @@
+function doClick(e) {
+	alert($.label.text);
+}
+
 function onRowClick(e) {
 	var w = Ti.UI.createWindow({
 		title:section
@@ -36,14 +40,14 @@ function setTableData(data){
 	var rawData = [];
 	_.each(data, function(story) {
 		var args = {
-			//excerpt: story.excerpt,
+			excerpt: story.excerpt,
 			url: story.url,
-			//date: story.date,
-			//headline: story.headline,
+			date: story.date,
+			headline: story.headline,
 			articleCopy: story.articleCopy,
-			//author: story.author,
+			author: story.author,
 			theTags: story.theTags,
-			//thumbnailURL: story.thumbnailURL
+			thumbnailURL: story.thumbnailURL
 		};
 		var row = Alloy.getController('newsRow', args).getView();
 		rawData.push(row);

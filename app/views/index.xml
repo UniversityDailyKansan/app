@@ -1,5 +1,5 @@
 <Alloy>
-	<Window class="container">
+	<Window class="container" id="window">
 		<Button id="callXhr">XHR Call</Button>
 		<TableView id="table"/>
 	</Window>
