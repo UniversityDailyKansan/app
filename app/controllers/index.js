@@ -1,6 +1,28 @@
 function doClick(e) {
-	alert($.label.text);
+	retrieveNews('news');
 }
+
+function retrieveNews(feed) {
+	var xhr = Ti.Network.createHTTPClient({
+		onload: function(e) {
+			processBookData(this.responseText);
+		},
+		onerror: function(e) {
+			Titanium.API.log(xhr.onerror);
+			var no_internet = Titanium.UI.createAlertDialog({
+				title: 'No Internet Connection',
+				message: 'Sorry, but you\'re not connected to the internet, and we can\'t load the map information or feed view. Please try again when a internet connection is avaiable.',
+				buttonNames: ['Shucks',],
+			});
+			no_internet.show();
+		},
+		timeout: 5000
+	});
+	xhr.open("GET", 'http://kansan.com/api/get_category_posts/?slug='+feed);
+	xhr.send();
+}
+
+retrieveNews('news');
 
 function onRowClick(e) {
 	var w = Ti.UI.createWindow({
@@ -32,58 +54,29 @@ function onRowClick(e) {
 	w.open({modal:true});
 }
 
-$.callXhr.addEventListener("click",function(e){
-	retrieveNews('news');
-});
-
 function setTableData(data){
 	var rawData = [];
 	_.each(data, function(story) {
 		var args = {
-			excerpt: story.excerpt,
-			url: story.url,
-			date: story.date,
-			headline: story.headline,
-			articleCopy: story.articleCopy,
-			author: story.author,
-			theTags: story.theTags,
-			thumbnailURL: story.thumbnailURL
+			'excerpt': story.excerpt,
+			'url': story.url,
+			'date': story.date,
+			'title': story.headline,
+			'articleCopy': story.articleCopy,
+			'author': story.author,
+			'theTags': story.theTags,
+			'thumbnailURL': story.thumbnailURL
 		};
-		var row = Alloy.getController('newsRow', args).getView();
-		rawData.push(row);
+		rawData.push(Ti.UI.createTableViewRow(args));
 	});
 	$.table.setData(rawData);
 }
 
-function retrieveNews(feed) {
-	var xhr = Ti.Network.createHTTPClient({
-		onload: function(e) {
-			processBookData(this.responseText);
-		},
-		onerror: function(e) {
-			Titanium.API.log(xhr.onerror);
-			var no_internet = Titanium.UI.createAlertDialog({
-				title: 'No Internet Connection',
-				message: 'Sorry, but you\'re not connected to the internet, and we can\'t load the map information or feed view. Please try again when a internet connection is avaiable.',
-				buttonNames: ['Shucks',],
-			});
-			no_internet.show();
-		},
-		timeout: 5000
-	});
-	xhr.open("GET", 'http://kansan.com/api/get_category_posts/?slug='+feed);
-	xhr.send();
-}
-
 function processBookData(feedData) {
-	var data = [];
+	var swagData = [];
+	var nameMe;
 	try {
-		var items = JSON.parse(feedData).posts;
-	} catch (e) {
-		alert('Invalid response from server. Try again.');
-		return;
-	}
-
+		var stories = JSON.parse(feedData).posts;
 	for (var i = 0; i < stories.length; i++) {
 		var headline = stories[i].title;
 		var excerpt = stories[i].excerpt;
@@ -144,13 +137,7 @@ function processBookData(feedData) {
 			height:144+thumbheight,
 		});
 
-		if(thumbnail){
-			story_headline.top = 4;
-			excerpt_view.top = 0;
-			meta_view.top = 2;
-		}
-
-		data.push({
+		swagData.push({
 			excerpt: excerpt,
 			url: stories[i].url,
 			date: date,
@@ -160,9 +147,14 @@ function processBookData(feedData) {
 			theTags: tagged,
 			thumbnailURL: thumbnail
 		});
+		nameMe = swagData;
 	}
+	setTableData(swagData);
+	} catch (e) {
 
-	setTableData(data);
+		alert(e);
+		return;
+	}
 }
 
 $.index.open();
