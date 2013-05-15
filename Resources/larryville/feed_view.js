@@ -36,15 +36,9 @@ var shadow_offset = {x: -2, y: -2}; //Set on heading titles
 var row_bgImage = 'images/row_bg.png'; //Set on heading backgrounds
 
 var typeData = [
-	{ prettyName:'Neighborhood News', hasChild:true, slug:'neighborhood-messages', desc:'Community stories from you or the grouch next door', },
 	{ prettyName:'Bargains', hasChild:true, slug:'bargains', desc: 'You will know where awesome deals are going to be.', },
 	{ prettyName:'Events', hasChild:true, slug:'events', desc:'There\'s a block party on Ohio next weekend', },
 	{ prettyName:'Restaurants', hasChild:true, slug:'restaurants', desc:'Tonight it\'s Mass St, North Iowa or a dine-in. Check the ratings and comments', },
-	{ prettyName:'Kansan Articles', hasChild:true, slug:'local-news', desc:'Mapped locations of the University Daily Kansan stories and reports', },
-	{ prettyName:'Tweets', hasChild:true, slug:'tweets', desc:'Tweet with your location on in your latest 140-composition and hashtag #larryvilleku', },
-	//{ prettyName:'Photos from Flickr', hasChild:true, slug:'photos', desc:'Geotagged hipster pics and snapshots of Lawrence', },
-	//{ prettyName:'Police Citations', hasChild:true, slug:'police-citations', desc:'Everything from an unpaid meter to an MIP to speeding on K-10', },
-	//{ prettyName:'Accidents', hasChild:true, slug:'car-accidents', desc:'Drive safely. Every accident within the city limits is mapped', },
 ];
 
 var dom = 'DIN 1451 Std';
@@ -62,48 +56,38 @@ win.backgroundColor = light_grey;
 
 	var xhr = Ti.Network.createHTTPClient();
 	xhr.timeout = 1000000;
-	var website = "http://larryvilleku.com";
+	var website = "http://localhost:8888";
 	var limit_value = 50 //Cause most iOS devices can handle this amount
 	var map_detail_height = 110; //For the detail view on the feed_row table.
 	if (Ti.Android) {
 		limit_value = 30; //Cause some Android devices can handle more, but the least can handle just 30.
 		map_detail_height = 0; //Ironically, Android can't handle more than one mapview per app...even though it's a Google map.
 	};
-	var feed = website+"/api/dev1/items.json?limit="+limit_value;
-	win.addEventListener('focus', getPreferences);
-		function getPreferences() {
-		Titanium.App.Analytics.trackPageview('/map'); //Fire analytics listener cause the app is starting
-		for (var g=0; g < typeData.length; g++) {
-			if(Titanium.App.Properties.getString(typeData[g].slug) === 'shown') {
-				feed += '&type='+typeData[g].slug;
-			}
-		};
-	};
-	getPreferences();
+	var feed = website+'/?json=get_recent_posts&count='+limit_value+'&post_type=lvitem&custom_fields=address,latlng,item_date,end_date';
 	Ti.API.info(feed);
-		
+
 /*********LOAD INDICATOR**********/
 
-	var actInd = Titanium.UI.createActivityIndicator({ 
-		bottom:200, 
-		style:Titanium.UI.iPhone.ActivityIndicatorStyle.BIG, 
+	var actInd = Titanium.UI.createActivityIndicator({
+		bottom:200,
+		style:Titanium.UI.iPhone.ActivityIndicatorStyle.BIG,
 		font: {
-			
+
 			fontSize:26,
 			fontWeight:'bold'
-		}, 
-		color: col1, 
-		message: 'Loading...', 
-		width: 'auto', 
+		},
+		color: col1,
+		message: 'Loading...',
+		width: 'auto',
 	});
 	actInd.show();
-	
+
 	setTimeout(function() { actInd.hide(); },5000);
 	win.add(actInd);
-	
-	xhr.onerror = function() { 
+
+	xhr.onerror = function() {
 		Titanium.API.log(xhr.onerror);
-		actInd.hide();         
+		actInd.hide();
 		var no_internet = Titanium.UI.createAlertDialog({
             title: 'No Internet Connection',
             message: 'Sorry, but you\'re not connected to the internet, and we can\'t load the map information or feed view. Please try again when a internet connection is avaiable.',
@@ -115,25 +99,25 @@ win.backgroundColor = light_grey;
 /**********ACTUAL API LOADING*************/
 
 	xhr.open("GET",feed);
-	
+
 	var data = [];
 	var annotations = [];
  	xhr.onload = function() {
 		try {
-			var newsitems = JSON.parse(this.responseText).features;
-						var x = 0;
-			 
+			var newsitems = JSON.parse(this.responseText).posts;
 			for (var i = 0; i < newsitems.length; i++){
-				
-				var location = newsitems[i].geometry.coordinates;
-				var type = newsitems[i].properties.type;
-				var title = newsitems[i].properties.title;
-				var raw_date = newsitems[i].properties.item_date;
+				var title = newsitems[i].title;
+				var location = newsitems[i].custom_fields.latlng[0];
+				location = location.split(',');
+				var cat = newsitems[i].categories[0].slug;
+				var cat_title = newsitems[i].categories[0].title;
+				var raw_date = newsitems[i].custom_fields.item_date[0];
+				var end_date = newsitems[i].custom_fields.end_date[0];
 				var month = raw_date.substring(5,7);
 				month = month.replace('01','Jan');
 				month = month.replace('02','Feb');
-				month = month.replace('03','Mar');
-				month = month.replace('04','Apr');
+				month = month.replace('03','March');
+				month = month.replace('04','April');
 				month = month.replace('05','May');
 				month = month.replace('06','June');
 				month = month.replace('07','July');
@@ -149,7 +133,11 @@ win.backgroundColor = light_grey;
 					title = title+'...'
 				}
 				
-				if(type !== 'photos') {
+				var currD = new Date();
+				var currently = currD.getFullYear()+currD.getMonth()+currD.getDay
+				fresh_end = end_date.replace('-','');
+
+				if(currently < fresh_end) {
 
 				var mrker = Titanium.Map.createAnnotation({
 					latitude:location[1],
@@ -160,10 +148,10 @@ win.backgroundColor = light_grey;
 					leftButton:'../images/map_icons/just_icons/'+type+'.png',
 					id:i
 				});
-				annotations.push(mrker); 
+				annotations.push(mrker);
 
 /*******FEED VIEW APPEARANCE*********/
-				
+
 				var row = Ti.UI.createTableViewRow({hasChild:false,id:i});
 
 				var newsitem_view = Ti.UI.createView({
@@ -178,7 +166,7 @@ win.backgroundColor = light_grey;
 					borderColor:'#b4b4b4',
 					borderWidth:2,
 				});
-				
+
 				var meta_view = Ti.UI.createView({
 					height:32,
 					width:82,
@@ -189,7 +177,7 @@ win.backgroundColor = light_grey;
 					borderColor:'#b4b4b4',
 					borderWidth:1,
 				});
-				
+
 				//Created at info
 				var date_label = Ti.UI.createLabel({
 					text:date.toUpperCase(),
@@ -220,26 +208,23 @@ win.backgroundColor = light_grey;
 					color:darker_grey,
 					font:{fontSize:15, fontFamily:cond}
 				});
-				
+
 				//Combine the elements
 				newsitem_view.add(meta_view);
 				newsitem_view.add(date_label);
 				newsitem_view.add(map_icon_view);
 				newsitem_view.add(newsitem_title);
-				
+
 				//And put it all together...
 				row.add(newsitem_view);
 				row.className = 'item'+i;
 
 				//row.description would follow the format, but Description is actually an attribute for TableRow defaults. So content it is.
-				row.content = newsitems[i].properties.description;
-				row.color = newsitems[i].properties.color;
-				row.type = type;
-				row.url = newsitems[i].properties.description;
+				row.content = newsitems[i].content;
+				row.cat = cat;
+				row.url = newsitems[i].url;
 				//row.title would follow the format, but Title is actually an attribute for this and that. So heading it is.
-				row.heading = newsitems[i].properties.title;
-				row.created_at = date;
-				row.news_id = newsitems[i].properties.id;
+				row.heading = newsitems[i].title;
 				row.location = location;
 				data[i] = row;
 			};
@@ -260,7 +245,7 @@ feed_rows.addEventListener('click',function(e) {
             		left:4,
             		right:4,
             		bottom:map_detail_height, //Only appears on iOS,
-            		html:'<html><head><link href="http://fonts.googleapis.com/css?family=Open+Sans+Condensed|Source+Sans+Pro|Lobster" rel="stylesheet" type="text/css"><style type="text/css"> body {font-family:"Source Sans Pro",Arial,sans-serif; width:'+reduced_phone_width+'px; font-size:16px;} img {width:'+reduced_phone_width+'px; height:auto} h3.mobile_app_only {color:'+col1+'; font-family:"Open Sans Condensed",Arial,sans-serif; font-weight:normal; font-size:22px;} a {text-decoration:none;}</style></head><body><a href="'+website+'/'+e.row.type+'/detail/'+e.row.news_id+'"><h3 class="mobile_app_only">' + e.row.heading + '</h3></a>' + e.row.content + '</body></html>'
+            		html:'<html><head><link href="http://fonts.googleapis.com/css?family=Open+Sans+Condensed|Source+Sans+Pro|Lobster" rel="stylesheet" type="text/css"><link href="http://larryvilleku.com/wp-content/themes/LarryvilleWP/app.css" rel="stylesheet" tyle="text/css"><style type="text/css"> body {width:'+reduced_phone_width+'px;} img {width:'+reduced_phone_width+'px; height:auto}</style></head><body>'+e.row.content+'</body></html>'
             	});
 
 				Titanium.App.Analytics.trackPageview('/larryville/detail-view/'+e.row.heading);
@@ -268,7 +253,7 @@ feed_rows.addEventListener('click',function(e) {
 				title:'Details'
 			});
 				detail_window.add(actual_content);
-            	
+
             var b = Titanium.UI.createButton({
                 title:'Close',
                 style:Titanium.UI.iPhone.SystemButtonStyle.PLAIN
@@ -278,7 +263,7 @@ feed_rows.addEventListener('click',function(e) {
             {
                 detail_window.close();
             });
-            	if (Ti.Android) { } else {	
+            	if (Ti.Android) { } else {
 					var detail_mrker = Titanium.Map.createAnnotation({
 						latitude:e.row.location[1],
 						longitude:e.row.location[0],
@@ -286,7 +271,7 @@ feed_rows.addEventListener('click',function(e) {
 						image:'../images/map_icons/'+e.row.type+'.png',
 						animate:true,
 					});
-				
+
 					var detail_mapview = Titanium.Map.createView({
 						mapType: Titanium.Map.STANDARD_TYPE,
 						animate:true,
@@ -303,12 +288,12 @@ feed_rows.addEventListener('click',function(e) {
 						borderWidth:3,
 					});
 					Titanium.Geolocation.distanceFilter = 10; //Not sure what this does, but it doesn't hurt
-				
+
 					detail_window.add(detail_mapview);
 				};
             	detail_window.open({modal:true});
        		});
-       		
+
 				var refresh = Ti.UI.createView({
 				height:40,
 				width:40,
@@ -325,7 +310,7 @@ feed_rows.addEventListener('click',function(e) {
 				width:25
 			});
 			refresh.add(refresh_circle);
-				
+
             refresh.addEventListener('click', function(){
             	feed = website+"/api/dev1/items.json?limit="+limit_value;
             	win.remove(mapview);
@@ -334,7 +319,6 @@ feed_rows.addEventListener('click',function(e) {
 					{
 						actInd.hide();
 					},1000);
-				getPreferences();
                 xhr.open("GET",feed);
  				xhr.send();
             });
@@ -345,7 +329,7 @@ feed_rows.addEventListener('click',function(e) {
 				width:40,
 				layout:'vertical',
 				left:60,
-				top:0				
+				top:0
 			});
  			var refresh_circle = Ti.UI.createImageView({
 				image:'../images/refresh.png',
@@ -354,8 +338,8 @@ feed_rows.addEventListener('click',function(e) {
 				height:25,
 				width:25
 			});
-			refresh.add(refresh_circle);			
-				
+			refresh.add(refresh_circle);
+
             refresh.addEventListener('click', function(){
             	feed = website+"/api/dev1/items.json?limit="+limit_value;
             	win.remove(feed_rows);
@@ -364,7 +348,6 @@ feed_rows.addEventListener('click',function(e) {
 					{
 						actInd.hide();
 					},1000);
-				getPreferences();
                 xhr.open("GET",feed);
  				xhr.send();
             });
@@ -382,4 +365,4 @@ win.add(feed_rows);
     	Titanium.App.Analytics.trackPageview('/larryville/news');
 	});
 
-			
+

@@ -1,15 +1,11 @@
-Welcome to your Appcelerator Titanium Mobile Project
-
-This is a blank project.  Start by editing your application's app.js to 
-make your first mobile project using Titanium.
-
+This is the UDK App.
 
 
 ----------------------------------
 Stuff our legal folk make us say:
 
-Appcelerator, Appcelerator Titanium and associated marks and logos are 
-trademarks of Appcelerator, Inc. 
+Appcelerator, Appcelerator Titanium and associated marks and logos are
+trademarks of Appcelerator, Inc.
 
 Titanium is Copyright (c) 2009-2010 by Appcelerator, Inc. All Rights Reserved.
 

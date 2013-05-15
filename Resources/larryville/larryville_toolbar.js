@@ -7,7 +7,7 @@ if(Ti.Platform.osname=='android') {
 	dom = 'DINMittelschriftStd';
 	cond = 'OpenSans-CondBold';
 	body = 'SourceSansPro-Regular';
-} 
+}
 //
 // HORIZONTAL SCROLLING TABS
 //
@@ -119,55 +119,6 @@ var news = Titanium.UI.createLabel({
 		Titanium.App.Properties.setString('currLVTB', 205);
 	});
 scrollView.add(news);
-var settings = Titanium.UI.createLabel({
-			text:'Settings',
-			left:305,
-			height:30,
-			color:'#f9f9f9',
-			font:{
-				fontSize:22,
-				fontFamily:dom,
-			},
-			width:'auto',
-			verticalAlign:'center',
-			textAlign:'center',
-			shadowColor:'#000000',
-			shadowOffset:{x:1, y:-1},
-			top:10
-		});
-	settings.addEventListener('click', function(e){
-    	Titanium.App.Analytics.trackPageview('/larryville/settings');
-    	var settingswindow = Ti.UI.createWindow({
-            url:"preferences.js",
-            title:"Preferences"
-    });
-		Titanium.UI.currentTab.open(settingswindow,{animated:true});
-		Titanium.App.Properties.setString('currLVTB', 325);
-	});
-scrollView.add(settings);
-
-var safeRide = Titanium.UI.createLabel({
-			text:'Call SafeRide',
-			left:420,
-			height:30,
-			color:'#f9f9f9',
-			font:{
-				fontSize:22,
-				fontFamily:dom,
-			},
-			width:'auto',
-			verticalAlign:'center',
-			textAlign:'center',
-			shadowColor:'#000000',
-			shadowOffset:{x:1, y:-1},
-			top:10
-		});
-	safeRide.addEventListener('click', function(e){
-    	Titanium.App.Analytics.trackPageview('/larryville/safeRide');
-		Ti.Platform.openURL('tel:+7858647233');
-		Titanium.App.Properties.setString('currLVTB', 395);
-	});
-scrollView.add(safeRide);
 
 scrollView.scrollTo((Titanium.App.Properties.getString('currLVTB') - 70), 0);
 

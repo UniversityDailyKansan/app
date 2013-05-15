@@ -10,74 +10,52 @@ var light_grey = '#e1e1e1'; //Light grey
 var darker_grey = '#555'; //Grey, little darker
 
 var typeData = [
-	{ prettyName:'Safebus Red', hasChild:true, slug:'sbred', desc:'Safebus Red', },
-	{ prettyName:'Safebus Green', hasChild:true, slug:'sbgreen', desc:'Safebus Green', },
-	{ prettyName:'Safebus Blue', hasChild:true, slug:'sbblue', desc:'Safebus Blue', },
-	{ prettyName:'Safebus Yellow', hasChild:true, slug:'sbyellow', desc:'Safebus Yellow', },
-	{ prettyName:'Neighborhood News', hasChild:true, slug:'neighborhood-messages', desc:'Community stories from you or the grouch next door', },
 	{ prettyName:'Bargains', hasChild:true, slug:'bargains', desc: 'You will know where awesome deals are going to be.', },
 	{ prettyName:'Events', hasChild:true, slug:'events', desc:'There\'s a block party on Ohio next weekend', },
 	{ prettyName:'Restaurants', hasChild:true, slug:'restaurants', desc:'Tonight it\'s Mass St, North Iowa or a dine-in. Check the ratings and comments', },
-	{ prettyName:'Kansan Articles', hasChild:true, slug:'local-news', desc:'Mapped locations of the University Daily Kansan stories and reports', },
-	{ prettyName:'Tweets', hasChild:true, slug:'tweets', desc:'Tweet with your location on in your latest 140-composition and hashtag #larryvilleku', },
-	//{ prettyName:'Photos from Flickr', hasChild:true, slug:'photos', desc:'Geotagged hipster pics and snapshots of Lawrence', },
-	//{ prettyName:'Police Citations', hasChild:true, slug:'police-citations', desc:'Everything from an unpaid meter to an MIP to speeding on K-10', },
-	// { prettyName:'Accidents', hasChild:true, slug:'car-accidents', desc:'Drive safely. Every accident within the city limits is mapped', },
 ];
 
 win.backgroundColor = light_grey;
 
-	function getPreferences() {
-		Titanium.App.Analytics.trackPageview('/map'); //Fire analytics listener cause the app is starting
-		for (var g=0; g < typeData.length; g++) {
-			if(Titanium.App.Properties.getString(typeData[g].slug) === 'shown') {
-				feed += '&type='+typeData[g].slug;
-			}
-		};
-	};
-
-	//If the app is opening for the first time, set preferences because the app will crash otherwise when it queries the Titanium properties on ViewOptions (type_view). 
-	//Learned from the comment on the first answer by Ravi http://developer.appcelerator.com/question/132802/check-if-the-app-is-running-on-the-first-time 
-	
 /****** PREPARE FEED *******/
 
 	var data = [];
 	var annotations = [];
 	var xhr = Ti.Network.createHTTPClient();
 	xhr.timeout = 1000000;
-	var website = "http://larryvilleku.com";
+	var website = "http://localhost:8888/limestone";
 	var limit_value = 40 //Cause most iOS devices can handle this amount
 	var map_detail_height = 110; //For the detail view on the feed_row table.
 	if (Ti.Android) {
 		limit_value = 30; //Cause some Android devices can handle more, but the least can handle just 30.
 		map_detail_height = 0; //Ironically, Android can't handle more than one mapview per app...even though it's a Google map.
 	};
-	var feed = website+"/api/dev1/items.json?limit="+limit_value;
-	getPreferences();
+	var feed = website+'/?json=get_recent_posts&count='+limit_value+'&post_type=lvitem&custom_fields=address,latlng,item_date,end_date';
+
 	xhr.open("GET", feed);
-		
+
 /*********LOAD INDICATOR**********/
 
-	var actInd = Titanium.UI.createActivityIndicator({ 
-		bottom:200, 
-		style:Titanium.UI.iPhone.ActivityIndicatorStyle.BIG, 
+	var actInd = Titanium.UI.createActivityIndicator({
+		bottom:200,
+		style:Titanium.UI.iPhone.ActivityIndicatorStyle.BIG,
 		font: {
-			
+
 			fontSize:26,
 			fontWeight:'bold'
-		}, 
-		color: col1, 
-		message: 'Loading...', 
-		width: 'auto', 
+		},
+		color: col1,
+		message: 'Loading...',
+		width: 'auto',
 	});
 	actInd.show();
-	
+
 	setTimeout(function() { actInd.hide(); },5000);
 	win.add(actInd);
-	
-	xhr.onerror = function() { 
+
+	xhr.onerror = function() {
 		Titanium.API.log(xhr.onerror);
-		actInd.hide();         
+		actInd.hide();
 		var no_internet = Titanium.UI.createAlertDialog({
             title: 'No Internet Connection',
             message: 'Sorry, but you\'re not connected to the internet, and we can\'t load the map information or feed view. Please try again when a internet connection is avaiable.',
@@ -93,11 +71,7 @@ win.backgroundColor = light_grey;
 	}
 	var currentRowIndex = index, row;
 	for (var i = 0; i < sections.length; ++i) {
-		//Ti.API.info('Section: ' + i);
-		//Ti.API.info('Section length: ' + sections[i].rows.length);
-		//Ti.API.info('currentRowIndex: ' + currentRowIndex);
 		if (currentRowIndex < sections[i].rows.length) {
-			//Ti.API.info('RETURNING: ' + sections[i].rows[currentRowIndex].title);
 			Ti.API.debug(sections[i].rows[currentRowIndex]);
 			Ti.API.debug(JSON.stringify(sections[i].rows[currentRowIndex]));
 			return sections[i].rows[currentRowIndex];
@@ -112,14 +86,16 @@ win.backgroundColor = light_grey;
 
  	xhr.onload = function() {
 		try {
-			var newsitems = JSON.parse(this.responseText).features;			 
+			var newsitems = JSON.parse(this.responseText).posts;
 			for (var i = 0; i < newsitems.length; i++){
-				
-				var location = newsitems[i].geometry.coordinates;
-				var type = newsitems[i].properties.type;
-				var title = newsitems[i].properties.title;
-				var raw_date = newsitems[i].properties.item_date;
-				
+				var title = newsitems[i].title;
+				var location = newsitems[i].custom_fields.latlng[0];
+				location = location.split(',');
+				var cat = newsitems[i].categories[0].slug;
+				var cat_title = newsitems[i].categories[0].title;
+				var raw_date = newsitems[i].custom_fields.item_date[0];
+				var end_date = newsitems[i].custom_fields.end_date[0];
+
 				var month = raw_date.substring(5,7);
 				month = month.replace('01','Jan');
 				month = month.replace('02','Feb');
@@ -140,22 +116,26 @@ win.backgroundColor = light_grey;
 					title = title+'...'
 				}
 				
-				if(type !== 'photos') {
+				var currD = new Date();
+				var currently = currD.getFullYear()+currD.getMonth()+currD.getDay
+				fresh_end = end_date.replace('-','');
+
+				if(currently < fresh_end) {
 
 				var mrker = Titanium.Map.createAnnotation({
 					latitude:location[1],
 					longitude:location[0],
 					title:title,
-					image:'../images/map_icons/'+type+'.png',
+					image:'../images/map_icons/'+cat+'.png',
 					animate:true,
-					leftButton:'../images/map_icons/just_icons/'+type+'.png',
+					leftButton:'../images/map_icons/just_icons/'+cat+'.png',
 					tid:'map'+i,
 					id:i
 				});
-				annotations.push(mrker); 
+				annotations.push(mrker);
 
 /*******FEED VIEW APPEARANCE*********/
-				
+
 				var row = Ti.UI.createTableViewRow({hasChild:false,id:i});
 
 				var newsitem_view = Ti.UI.createView({
@@ -170,7 +150,7 @@ win.backgroundColor = light_grey;
 					borderColor:'#b4b4b4',
 					borderWidth:2,
 				});
-				
+
 				var meta_view = Ti.UI.createView({
 					height:32,
 					width:82,
@@ -181,7 +161,7 @@ win.backgroundColor = light_grey;
 					borderColor:'#b4b4b4',
 					borderWidth:1,
 				});
-				
+
 				//Created at info
 				var date_label = Ti.UI.createLabel({
 					text:date.toUpperCase(),
@@ -193,9 +173,9 @@ win.backgroundColor = light_grey;
 					font:{fontSize:24}
 				});
 
-				//Map icon of schema (type)
+				//Map icon of schema (cat)
 				var map_icon_view = Ti.UI.createImageView({
-					image:'../images/map_icons/just_icons/'+type+'.png',
+					image:'../images/map_icons/just_icons/'+cat+'.png',
 					right:4,
 					top:-31,
 					height:35,
@@ -212,31 +192,28 @@ win.backgroundColor = light_grey;
 					color:darker_grey,
 					font:{fontSize:15}
 				});
-				
+
 				//Combine the elements
 				newsitem_view.add(meta_view);
 				newsitem_view.add(date_label);
 				newsitem_view.add(map_icon_view);
 				newsitem_view.add(newsitem_title);
-				
+
 				//And put it all together...
 				row.add(newsitem_view);
 				row.className = 'item'+i;
 				data[i] = row;
-				
+
 /******* FEED VIEW VARIABLES FOR DETAIL VIEW *********/
 
 				//row.description would follow the format, but Description is actually an attribute for TableRow defaults. So content it is.
-				row.content = newsitems[i].properties.description;
-				row.color = newsitems[i].properties.color;
-				row.type = type;
-				row.url = newsitems[i].properties.description;
+				row.content = newsitems[i].content;
+				row.cat = cat;
+				row.url = newsitems[i].url;
 				//row.title would follow the format, but Title is actually an attribute for this and that. So heading it is.
-				row.heading = newsitems[i].properties.title;
-				row.created_at = date;
-				row.news_id = newsitems[i].properties.id;
+				row.heading = newsitems[i].title;
 				row.location = location;
-			};
+				}
 		}
 				var feed_rows = Titanium.UI.createTableView({
 				data:data,
@@ -278,131 +255,10 @@ Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
 					mapview.setLocation(region);
 				});
 			};
-			
+
  			Titanium.Geolocation.addEventListener('location',function(){
     			getLocation();
-			}); 			
-			var file = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, 'sbroutes.json');    
-			var results, route, coords, stops, location, times; 
-			var preParseData = (file.read().text); 
-			var response = JSON.parse(preParseData).results; 
-			var date = new Date();
-			var hours = date.getHours();
-			var minutes = date.getMinutes();
-			var hm = ((hours * 60)+minutes); //Returns how many minutes
-			var weekend = '';
-			if(date.getDay() == '4' || date.getDay() == '5' || date.getDay() == '6' || date.getDay() == '0'){
-				weekend = 'indeed';
-			}
-			function appendIterationTimes(array,iteration){
-				//http://stackoverflow.com/a/8069367 && http://stackoverflow.com/a/4822630
-				for (var i = array[0]; i <= 1439; i += iteration) {
-					if(!(i == array[0]))
-					array.push(i);
-				}
-				for (var i = 0; i <= array[1]; i += iteration) {
-					if(!(i == array[1]))
-					array.push(i);
-				}
-				array.sort(function(a,b){return a - b});
-				return array;
-			}
-			function closest(array,num){
-    			var k=0;
-    			var minDiff=100000;
-    			var ans;
-    			for(k in array){
-         			var m=Math.abs(num-array[k]);
-         			if(m<minDiff){ 
-                		minDiff=m; 
-                		ans=array[k]; 
-            		}
-      			}
-    			return ans;
-			}
-			function convertToTime(raw){
-				if(raw === 0)
-					return '12:00 a.m.';
-				else if(raw === 60)
-					return '1:00 a.m.';
-				else if(raw === 120)
-					return '2:00 a.m.';
-				else if(raw === 180)
-					return '3:00 a.m.';
-				else if(raw === 1260)
-					return '9:00 p.m.';
-				else if(raw === 1320)
-					return '10:00 p.m.';
-				else if(raw === 1380)
-					return '11:00 p.m.';
-				else {
-					var convertHours = (raw / 60);
-					var splitHours = convertHours.toString().split(".");
-					var convertMinutes = ((splitHours[1] * 60)/100);
-					var splitMinutes = convertMinutes.toString().split('.');
-					var minutes = Math.round(((splitMinutes[0].substring(0,2))+'.'+splitMinutes[0].substring(2,5)));
-					if(minutes === 3){
-						minutes = 30;
-					}
-					if(splitHours[0] >= 12 && splitHours !== 0){
-						var hours = splitHours[0] - 12;
-						var timeOfDay = 'p.m.';
-					} else if(splitHours[0] == 0){
-						var hours = 12;
-						var timeOfDay = 'a.m.';
-					} else {
-						var hours = splitHours[0];
-						var timeOfDay = 'a.m.';
-					}
-					return hours +':'+minutes+' '+timeOfDay;
-				}
-			}
-			function createRoute(routeName,response){
-				var routePoints = []; //Create empty point array
-				var routeStops = []; //Create empty stop array
-				var coordsPos = response[dd].coords;
-				var stopsPos = response[dd].stops;
-				for(i = 0; i < coordsPos.length; i++) {
-					routePoints.push({latitude: coordsPos[i][0], longitude: coordsPos[i][1]});
-				}
-				for(p = 0; p < stopsPos.length; p++) {
-					var timePos = appendIterationTimes(stopsPos[p].times[0],response[dd].iteration);
-					var nearestTime = closest(timePos,hm, response[dd].iteration);
-					var nearestTimeIndex = timePos.indexOf(nearestTime);
-					var nextTimesPos = timePos.slice((nearestTimeIndex+parseInt(1)), (nearestTimeIndex+parseInt(4)));
-					var nextTimes = '';
-					for(h = 0; h < nextTimesPos.length; h++){
-						nextTimes += convertToTime(nextTimesPos[h]) + ', ';
-					}
-					nearestTime = convertToTime(nearestTime);
-					var mrker = Titanium.Map.createAnnotation({
-						latitude:stopsPos[p].location[0][0],
-						longitude:stopsPos[p].location[0][1],
-						title:stopsPos[p].prettyName+': '+nearestTime,
-						image:'../images/map_icons/sb'+routeName+'.png',
-						subtitle:'Next: '+nextTimes,
-						animate:true,
-						id:p,
-						tid:'bus'+p,
-					});
-					routeStops.push(mrker); 
-				}
-				var newRoute = {
-					name: routeName+" Route",
-					points:routePoints,
-					color:routeName,
-					width: response[dd].lineWidth,
-				};
-				if(Titanium.App.Properties.getString('sb'+routeName) === 'shown' && weekend === 'indeed') {		
-					mapview.addRoute(newRoute);
-					mapview.addAnnotations(routeStops);
-				}
-			}
-			
-			for(dd = 0; dd < response.length; dd++) {
-				createRoute(response[dd].route, response)
-			}
-			
+			});
 			mapview.addEventListener('click', function(evt) {
                 var annotation = evt.annotation;
                 var title = evt.title;
@@ -417,11 +273,11 @@ Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
             		left:4,
             		right:4,
             		bottom:map_detail_height, //Only appears on iOS,
-            		html:'<html><head><link href="http://fonts.googleapis.com/css?family=Open+Sans+Condensed|Source+Sans+Pro|Lobster" rel="stylesheet" type="text/css"><style type="text/css"> body {font-family:"Source Sans Pro",Arial,sans-serif; width:'+reduced_phone_width+'px; font-size:16px;} img {width:'+reduced_phone_width+'px; height:auto} h3.mobile_app_only {color:'+col1+'; font-family:"Open Sans Condensed",Arial,sans-serif; font-weight:normal; font-size:22px;} a {text-decoration:none;}</style></head><body><a href="'+website+'/'+row.type+'/detail/'+row.news_id+'"><h3 class="mobile_app_only">' + row.heading + '</h3></a>' + row.content + '</body></html>'
+            		html:'<html><head><link href="http://fonts.googleapis.com/css?family=Open+Sans+Condensed|Source+Sans+Pro|Lobster" rel="stylesheet" type="text/css"><link href="http://larryvilleku.com/wp-content/themes/LarryvilleWP/app.css" rel="stylesheet" tyle="text/css"><style type="text/css"> body {width:'+reduced_phone_width+'px;} img {width:'+reduced_phone_width+'px; height:auto}</style></head><body>'+row.content+'</body></html>'
             	});
-				
+
 				Titanium.App.Analytics.trackPageview('/larryville/detail-view/'+row.heading);
-				
+
 				var detail_window = Ti.UI.createWindow({
 					title:'Details'
 				});
@@ -434,7 +290,7 @@ Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
             	b.addEventListener('click',function() {
                 	detail_window.close();
            		});
-            	if (Ti.Android) { } else {	
+            	if (Ti.Android) { } else {
 					var detail_mrker = Titanium.Map.createAnnotation({
 						latitude:row.location[1],
 						longitude:row.location[0],
@@ -442,7 +298,7 @@ Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
 						image:'../images/map_icons/'+row.type+'.png',
 						animate:true,
 					});
-				
+
 					var detail_mapview = Titanium.Map.createView({
 						mapType: Titanium.Map.STANDARD_TYPE,
 						animate:true,
@@ -459,14 +315,14 @@ Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
 						borderWidth:3,
 					});
 					Titanium.Geolocation.distanceFilter = 10;
-				
+
 					detail_window.add(detail_mapview);
 				};
             	detail_window.open({modal:true});
  				}
  				}
             });
-			
+
 				var refresh = Ti.UI.createView({
 				height:40,
 				width:40,
@@ -483,35 +339,34 @@ Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
 				width:25
 			});
 			refresh.add(refresh_circle);
-				
+
             refresh.addEventListener('click', function(){
-            	feed = website+"/api/dev1/items.json?limit="+limit_value;
+            	feed = website+'/?json=get_recent_posts&count='+limit_value+'&post_type=lvitem&custom_fields=address,latlng,item_date,end_date';
             	win.remove(mapview);
 				actInd.show();
 					setTimeout(function()
 					{
 						actInd.hide();
 					},1000);
-				getPreferences();
                 xhr.open("GET",feed);
  				xhr.send();
             });
 		win.add(refresh);
 			Ti.include('larryville_toolbar.js');
 
-			win.add(mapview); 
- 			
+			win.add(mapview);
+
 				}
 		catch(E){
 			alert(E);
 		}
 	};
 	xhr.send();
-	
+
 
 	win.addEventListener('focus', function(e){
     	Titanium.App.Analytics.trackPageview('/larryville/map');
 	});
-	
+
 Titanium.Geolocation.purpose = "Recieve User Location";
 Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
