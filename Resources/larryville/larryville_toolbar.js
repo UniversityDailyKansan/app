@@ -29,7 +29,6 @@ var upArrow = Titanium.UI.createView({
 	height: 10,
 	width:20
 });
-Ti.API.info(Titanium.App.Properties.getString('currLVTB'));
 scrollView.add(upArrow);
 
 var shadowLeft = Titanium.UI.createView({

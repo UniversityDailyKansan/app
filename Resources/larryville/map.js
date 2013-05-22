@@ -31,7 +31,6 @@ win.backgroundColor = light_grey;
 		map_detail_height = 0; //Ironically, Android can't handle more than one mapview per app...even though it's a Google map.
 	};
 	var feed = website+'/?json=get_recent_posts&count='+limit_value+'&post_type=lvitem&custom_fields=address,latlng,item_date,end_date';
-
 	xhr.open("GET", feed);
 
 /*********LOAD INDICATOR**********/
@@ -72,8 +71,8 @@ win.backgroundColor = light_grey;
 	var currentRowIndex = index, row;
 	for (var i = 0; i < sections.length; ++i) {
 		if (currentRowIndex < sections[i].rows.length) {
-			Ti.API.debug(sections[i].rows[currentRowIndex]);
-			Ti.API.debug(JSON.stringify(sections[i].rows[currentRowIndex]));
+			//Ti.API.debug(sections[i].rows[currentRowIndex]);
+			//Ti.API.debug(JSON.stringify(sections[i].rows[currentRowIndex]));
 			return sections[i].rows[currentRowIndex];
 		}
 		else {
@@ -91,12 +90,12 @@ win.backgroundColor = light_grey;
 				var title = newsitems[i].title;
 				var location = newsitems[i].custom_fields.latlng[0];
 				location = location.split(',');
-				var cat = newsitems[i].categories[0].slug;
+				var type = newsitems[i].categories[0].slug;
 				var cat_title = newsitems[i].categories[0].title;
-				var raw_date = newsitems[i].custom_fields.item_date[0];
+				var item_date = newsitems[i].custom_fields.item_date[0];
 				var end_date = newsitems[i].custom_fields.end_date[0];
 
-				var month = raw_date.substring(5,7);
+				var month = item_date.substring(5,7);
 				month = month.replace('01','Jan');
 				month = month.replace('02','Feb');
 				month = month.replace('03','March');
@@ -109,31 +108,35 @@ win.backgroundColor = light_grey;
 				month = month.replace('10','Oct');
 				month = month.replace('11','Nov');
 				month = month.replace('12','Dec');
-				var day = raw_date.substring(8,10);
+				var day = item_date.substring(8,10);
 				var date = month+' '+day;
 				if(title.length >= 60 ) {
 					title = title.substr(0,60);
 					title = title+'...'
 				}
-				
-				var currD = new Date();
-				var currently = currD.getFullYear()+currD.getMonth()+currD.getDay
-				fresh_end = end_date.replace('-','');
 
+				var currD = new Date();
+				var currently = currD.getFullYear();
+				currently = currently.toString();
+				//http://stackoverflow.com/questions/3605214/javascript-add-leading-zeroes-to-date
+				currently += ('0' + currD.getMonth()).slice(-2);
+				current = currently.toString();
+				currently += ('0' + currD.getDate()).slice(-2);
+				var fresh_end = end_date.replace(/-/g,'');
 				if(currently < fresh_end) {
 
 				var mrker = Titanium.Map.createAnnotation({
-					latitude:location[1],
-					longitude:location[0],
+					latitude:location[0],
+					longitude:location[1],
 					title:title,
-					image:'../images/map_icons/'+cat+'.png',
+					image:'../images/map_icons/'+type+'.png',
 					animate:true,
-					leftButton:'../images/map_icons/just_icons/'+cat+'.png',
+					leftButton:'../images/map_icons/just_icons/'+type+'.png',
 					tid:'map'+i,
 					id:i
 				});
 				annotations.push(mrker);
-
+				
 /*******FEED VIEW APPEARANCE*********/
 
 				var row = Ti.UI.createTableViewRow({hasChild:false,id:i});
@@ -175,7 +178,7 @@ win.backgroundColor = light_grey;
 
 				//Map icon of schema (cat)
 				var map_icon_view = Ti.UI.createImageView({
-					image:'../images/map_icons/just_icons/'+cat+'.png',
+					image:'../images/map_icons/just_icons/'+type+'.png',
 					right:4,
 					top:-31,
 					height:35,
@@ -208,7 +211,7 @@ win.backgroundColor = light_grey;
 
 				//row.description would follow the format, but Description is actually an attribute for TableRow defaults. So content it is.
 				row.content = newsitems[i].content;
-				row.cat = cat;
+				row.type = type;
 				row.url = newsitems[i].url;
 				//row.title would follow the format, but Title is actually an attribute for this and that. So heading it is.
 				row.heading = newsitems[i].title;
@@ -273,7 +276,7 @@ Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
             		left:4,
             		right:4,
             		bottom:map_detail_height, //Only appears on iOS,
-            		html:'<html><head><link href="http://fonts.googleapis.com/css?family=Open+Sans+Condensed|Source+Sans+Pro|Lobster" rel="stylesheet" type="text/css"><link href="http://larryvilleku.com/wp-content/themes/LarryvilleWP/app.css" rel="stylesheet" tyle="text/css"><style type="text/css"> body {width:'+reduced_phone_width+'px;} img {width:'+reduced_phone_width+'px; height:auto}</style></head><body>'+row.content+'</body></html>'
+            		html:'<html><head><link href="http://larryvilleku.com/wp-content/themes/LarryvilleWP/app.css" rel="stylesheet" tyle="text/css"><style type="text/css"> body {width:'+reduced_phone_width+'px;} img {width:'+reduced_phone_width+'px; height:auto}</style></head><body>'+row.content+'</body></html>'
             	});
 
 				Titanium.App.Analytics.trackPageview('/larryville/detail-view/'+row.heading);
@@ -291,25 +294,27 @@ Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
                 	detail_window.close();
            		});
             	if (Ti.Android) { } else {
+            		var detailAnnotations = [];
 					var detail_mrker = Titanium.Map.createAnnotation({
-						latitude:row.location[1],
-						longitude:row.location[0],
+						latitude:row.location[0],
+						longitude:row.location[1],
 						title:row.heading,
 						image:'../images/map_icons/'+row.type+'.png',
 						animate:true,
 					});
+					detailAnnotations.push(detail_mrker);
 
 					var detail_mapview = Titanium.Map.createView({
 						mapType: Titanium.Map.STANDARD_TYPE,
 						animate:true,
-						region: {latitude:row.location[1], longitude:row.location[0], latitudeDelta:0.002, longitudeDelta:0.002},
+						region: {latitude:row.location[0], longitude:row.location[1], latitudeDelta:0.002, longitudeDelta:0.002},
 						regionFit:true,
 						userLocation:false,
 						visible: true,
 						left:0,
 						bottom:0,
 						height:map_detail_height,
-						annotations:[detail_mrker],
+						annotations:detailAnnotations,
 						zoom:40,
 						borderColor:'#999',
 						borderWidth:3,
