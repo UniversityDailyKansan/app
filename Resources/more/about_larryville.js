@@ -2,8 +2,44 @@ var win = Ti.UI.currentWindow;
 	win.addEventListener('focus', function(e){
     	Titanium.App.Analytics.trackPageview('/more/larryville-about');
 	});
-	var aboutWeb = Titanium.UI.createWebView({
-		html:'<html><head><link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css"><link href="http://fonts.googleapis.com/css?family=Lobster" rel="stylesheet" type="text/css"><style type="text/css"> body {font-family:"Open Sans",Arial,sans-serif;width:80%; margin-left:10px; margin-right:10px; font-size:16px; background:#fff; color:#555;} img {width:80%;height:auto} img.logo {margin-top:60px; margin-bottom:5px;} a {text-decoration:none; color:blue; } a.org_copyright {font-size:10px; color:inherit;} p {text-align:left; margin-botom:35px; font-size:14px; } p.developer {text-align:center; margin-bottom:60px; font-size:16px;} span.misc_head {font-size:16px; margin-top:30px; display:block; font-weight:bold; text-transform:uppercase; margin-bottom:0px} p.subset {text-align:left; font-size:12px;} p.misc_credits {margin-top:5px; text-align:left; font-size:12px; color:#444}</style></head><body><a href="http://kansan.com" class="org_copyright">&copy; Copyright 2012 The University Daily Kansan</a><a href="http://larryvilleku.com"><img src="http://larryvilleku.com/dependencies/images/larryville_for_white.png" class="logo" /></a><br /><p class="developer">App Developed by Tim Shedor</p><p class="subset">This app uses open-source elements and is protected by the MIT license. For more information, visit the <a href="http://larryvilleku.com/info/mobile.php">LarryvilleKU mobile page</a> or this app\'s <a href="http://github.com/tshedor/OpenBlock-Mobile-App">Github page</a></p><a href="http://larryvilleku.com/info/credits.php" style="color:#444"><span class="misc_head">Misc Credits</span></a><p class="misc_credits"><em>Fonts:</em> <a href="http://www.google.com/webfonts">Google Web Fonts</a>, <a href="http://www.theleagueofmoveabletype.com/">The League of Moveable Type</a> | <em>Map Icons:</em> <a href="http://mapicons.nicolasmollet.com">Nicolas Mollet</a></p></body></html>',
-		width: '94%',
+
+var tv = Ti.UI.createTableView({minRowHeight:50,rowBackgroundColor:'white',backgroundColor:'white',});
+
+var text1 = 'LarryvilleKU is a hyper-local news service originally inspired by the Open Block platform. It is now available to students as an exclusive deal-finder.';
+var text2 = 'Map icons created by Nicolas Mollet\'s project';
+
+var data = [];
+
+	var row = Ti.UI.createTableViewRow({height:'auto',className:"row"});
+
+	var textView = Ti.UI.createView({
+		height:'auto',
+		layout:'vertical',
+		left:20,
+		top:20,
+		bottom:60,
+		right:20
 	});
-	win.add(aboutWeb);
+
+	var l1 = Ti.UI.createLabel({
+		text:text1,
+		height:'auto',
+		color:'black'
+	});
+	textView.add(l1);
+
+	var l2 = Ti.UI.createLabel({
+		text:text2,
+		top:10,
+		color:'black',
+		height:'auto'
+	});
+	textView.add(l2);
+
+	row.add(textView);
+
+	data.push(row);
+
+tv.setData(data);
+
+win.add(tv);

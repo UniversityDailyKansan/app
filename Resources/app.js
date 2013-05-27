@@ -44,7 +44,7 @@ var newswin = Ti.UI.createWindow({
 });
 
 var newstab = Ti.UI.createTab({
-    icon:'tabs/kansan.png',
+    icon:'images/tabs/kansan.png',
     title:'News',
     window:newswin
 });
@@ -56,7 +56,7 @@ var kjhkwin = Ti.UI.createWindow({
 
 
 var kjhktab = Ti.UI.createTab({
-    icon:'tabs/radio.png',
+    icon:'images/tabs/radio.png',
     title:'KJHK',
     window:kjhkwin
 });
@@ -67,7 +67,7 @@ var ffawin = Ti.UI.createWindow({
 });
 
 var ffatab = Ti.UI.createTab({
-    icon:'tabs/ffa.png',
+    icon:'images/tabs/ffa.png',
     title:'Free For All',
     window:ffawin
 });
@@ -78,7 +78,7 @@ var lvwin = Ti.UI.createWindow({
 });
 
 var lvtab = Ti.UI.createTab({
-    icon:'tabs/larryville.png',
+    icon:'images/tabs/larryville.png',
     title:'LarryvilleKU',
     window:lvwin
 });
@@ -89,7 +89,7 @@ var morewin = Ti.UI.createWindow({
 });
 
 var moretab = Ti.UI.createTab({
-    icon:'tabs/info.png',
+    icon:'images/tabs/info.png',
     title:'More',
     window:morewin
 });
