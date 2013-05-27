@@ -23,7 +23,7 @@ win.backgroundColor = light_grey;
 	var annotations = [];
 	var xhr = Ti.Network.createHTTPClient();
 	xhr.timeout = 1000000;
-	var website = "http://localhost:8888/limestone";
+	var website = "http://larryvilleku.com";
 	var limit_value = 40 //Cause most iOS devices can handle this amount
 	var map_detail_height = 110; //For the detail view on the feed_row table.
 	if (Ti.Android) {
