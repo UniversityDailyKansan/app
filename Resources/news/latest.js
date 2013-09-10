@@ -1,7 +1,7 @@
 var win = Titanium.UI.currentWindow;
 win.backgroundImage = '../images/bg.png';
 win.backgroundRepeat = true;
-var feed = 'http://kansan.com/api/get_recent_posts';
+var feed = 'http://kansan.com/api/get_posts/?count=10';
 var section = 'News';
 var font1 = 'font-family:"Source Sans Pro", Helvetica, Arial, sans-serif';
 var font2 = 'font-family:"Open Sans Condensed", Helvetica, Arial, sans-serif';
@@ -66,12 +66,14 @@ Titanium.UI.iPhone.appBadge=Titanium.UI.iPhone.appBadge-1;
 				excerpt = excerpt.replace('&#8243;', '"');
 				excerpt = excerpt.replace('&#8217;', "'");
 				excerpt = excerpt.replace('&#8216;', "'");
+				excerpt = excerpt.replace('<p>', '');
+				excerpt = excerpt.replace('</p>', '');
 				headline = headline.replace('&#8220;', '"');
 				headline = headline.replace('&#8221;', '"');
 				headline = headline.replace('&#8243;', '"');
 				headline = headline.replace('&#8217;', "'");
 				headline = headline.replace('&#8216;', "'");
-				var date_raw = stories[i].date;''
+				var date_raw = stories[i].date;
 				var categories = stories[i].categories;
 				var author = stories[i].author.nickname;
 				var thumbheight = 0;

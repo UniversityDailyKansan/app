@@ -250,7 +250,7 @@ feed_rows.addEventListener('click',function(e) {
             		left:4,
             		right:4,
             		bottom:map_detail_height, //Only appears on iOS,
-            		html:'<html><head><link href="http://larryvilleku.com/wp-content/themes/LarryvilleWP/app.css" rel="stylesheet" tyoe="text/css"><style type="text/css"> body {width:'+reduced_phone_width+'px;} img {width:'+reduced_phone_width+'px; height:auto}</style></head><body>'+e.row.content+'</body></html>'
+            		html:'<html><head><link href="http://larryvilleku.com/wp-content/themes/LarryvilleWP/app.css" rel="stylesheet" tyoe="text/css"><style type="text/css"><style>img{ max-width:100%; }</style><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><body>'+e.row.content+'</body></html>'
             	});
 
 				Titanium.App.Analytics.trackPageview('/larryville/detail-view/'+e.row.heading);
