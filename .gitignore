@@ -3,3 +3,4 @@ build
 .fastdev.lock
 build.log
 .project
+tiapp.xml
