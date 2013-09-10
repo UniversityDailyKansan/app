@@ -273,10 +273,11 @@ Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
                 var row = getTableViewRowFromIndex(feed_rows, id);
             	var actual_content = Ti.UI.createWebView({
             		top:0,
-            		left:4,
-            		right:4,
+            		left:0,
+					width:'100%',
+					scalesPageToFit:true,
             		bottom:map_detail_height, //Only appears on iOS,
-            		html:'<html><head><link href="http://larryvilleku.com/wp-content/themes/LarryvilleWP/app.css" rel="stylesheet" tyoe="text/css"><style type="text/css"><style>img{ max-width:100%; }</style><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><body>'+row.content+'</body></html>'
+            		html:'<html><head><link href="http://larryvilleku.com/wp-content/themes/LarryvilleWP/app.css?v='+Date.now()+'" rel="stylesheet" tyoe="text/css"><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><body>'+row.content+'</body></html>'
             	});
 
 				Titanium.App.Analytics.trackPageview('/larryville/detail-view/'+row.heading);

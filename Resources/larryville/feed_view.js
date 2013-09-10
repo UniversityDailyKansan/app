@@ -57,7 +57,7 @@ win.backgroundColor = light_grey;
 	var xhr = Ti.Network.createHTTPClient();
 	xhr.timeout = 1000000;
 	var website = "http://larryvilleku.com";
-	var limit_value = 50 //Cause most iOS devices can handle this amount
+	var limit_value = 50; //Cause most iOS devices can handle this amount
 	var map_detail_height = 110; //For the detail view on the feed_row table.
 	if (Ti.Android) {
 		limit_value = 30; //Cause some Android devices can handle more, but the least can handle just 30.
@@ -187,18 +187,18 @@ win.backgroundColor = light_grey;
 				var date_label = Ti.UI.createLabel({
 					text:date.toUpperCase(),
 					left:8,
-					top:-26,
+					top:-28,
 					height:25,
 					width:'auto',
 					color:'#fff',
-					font:{fontSize:24, fontFamily:cond}
+					font:{fontSize:20, fontFamily:cond}
 				});
 
 				//Map icon of schema (type)
 				var map_icon_view = Ti.UI.createImageView({
 					image:'../images/map_icons/just_icons/'+type+'.png',
 					right:4,
-					top:-31,
+					top:-26,
 					height:35,
 					width:35,
 				});
@@ -207,7 +207,7 @@ win.backgroundColor = light_grey;
 				var newsitem_title = Ti.UI.createLabel({
 					text:title,
 					left:10,
-					top:-2,
+					top:-4,
 					height:'auto',
 					width:'85%',
 					color:darker_grey,
@@ -247,10 +247,11 @@ feed_rows.addEventListener('click',function(e) {
 
             	var actual_content = Ti.UI.createWebView({
             		top:0,
-            		left:4,
-            		right:4,
+            		left:0,
+					width:'100%',
+					scalesPageToFit:true,
             		bottom:map_detail_height, //Only appears on iOS,
-            		html:'<html><head><link href="http://larryvilleku.com/wp-content/themes/LarryvilleWP/app.css" rel="stylesheet" tyoe="text/css"><style type="text/css"><style>img{ max-width:100%; }</style><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head><body>'+e.row.content+'</body></html>'
+            		html:'<html><head><link href="http://larryvilleku.com/wp-content/themes/LarryvilleWP/app.css?v='+Date.now()+'" rel="stylesheet" type="text/css" /><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" /></head><body>'+e.row.content+'</body></html>'
             	});
 
 				Titanium.App.Analytics.trackPageview('/larryville/detail-view/'+e.row.heading);
