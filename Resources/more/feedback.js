@@ -12,7 +12,7 @@ win.orientationModes = [
 
 var dEmailMessage = Titanium.UI.createEmailDialog();
 	dEmailMessage.subject = 'UDK Mobile App Feedback';
-	dEmailMessage.toRecipients = ['tshedor@kansan.com'];
+	dEmailMessage.toRecipients = ['dev@kansan.com'];
 	dEmailMessage.messageBody = 'Sent from the University Daily Kansan Mobile App';
  
 dEmailMessage.addEventListener('complete',function(e)
